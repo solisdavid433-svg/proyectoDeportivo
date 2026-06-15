@@ -1,3 +1,18 @@
+<?php
+session_start();
+
+// Bloque anti-caché: Obliga al navegador a consultar al servidor siempre
+header("Cache-Control: no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+
+// Si no existe la sesión de rol O el rol no es Administrador, lo expulsamos
+if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administrador') {
+    header('Location: index.php');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -17,7 +32,7 @@
         </div>
         <div class="navbar-user">
             <span class="user-badge">Admin</span>
-            <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+            <button id="btn-logout" class="btn-logout" onclick="window.location.href='api/logout.php'">Cerrar Sesión</button>
         </div>
     </header>
 

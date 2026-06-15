@@ -1036,3 +1036,178 @@ body {
 .btn-back:active {
     transform: scale(0.97);
 }
+
+/* ==========================================================================
+   DESIGN: AJUSTES VISUALES PARA LA MESA DEL STAFF (COLORES, MODAL Y BOTÓN X)
+   ========================================================================== */
+
+/* 1. CONTROL DE COLORES PARA LAS TARJETAS (ENTREGADO EN VERDE) */
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: inline-block;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+/* Cuando pasa a ENTREGADO pintará un fondo verde suave con letras verdes oscuras */
+.status-badge.entregado {
+    background-color: #DCFCE7;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+}
+
+/* Por si quieres contrastar, el PENDIENTE en un amarillo/naranja sutil */
+.status-badge.pendiente {
+    background-color: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FDE68A;
+}
+
+
+/* 2. MODAL COMPLETAMENTE CENTRADO EN LA PANTALLA (FLEXBOX) */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    /* Ocupa todo el ancho de la tableta */
+    height: 100vh;
+    /* Ocupa todo el alto de la tableta */
+    background-color: rgba(15, 23, 42, 0.6);
+    /* Fondo oscuro semitransparente */
+
+    /* El truco maestro para centrar horizontal y verticalmente */
+    display: none;
+    /* JavaScript cambiará esto a 'flex' al abrir */
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+    /* Asegura que se ponga por encima de cualquier otro botón */
+    backdrop-filter: blur(4px);
+    /* Efecto premium de desenfoque al fondo */
+}
+
+.status-badge.cambio {
+    background-color: #F3E8FF;
+    /* Morado claro */
+    color: #6B21A8;
+    /* Morado oscuro */
+    border: 1px solid #E9D5FF;
+}
+
+/* Caja blanca interna del modal */
+.modal-content {
+    background-color: #ffffff;
+    padding: 2.5rem 2rem 2rem 2rem;
+    /* Espaciado interno generoso */
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 500px;
+    /* Tamaño ideal para firmas en tabletas */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    position: relative;
+    /* CRÍTICO: Permite que la 'X' se acomode respecto a esta caja */
+    animation: ventanaEmergente 0.25s ease-out;
+    /* Animación de entrada suave */
+}
+
+/* Animación sutil de crecimiento al aparecer */
+@keyframes ventanaEmergente {
+    from {
+        transform: scale(0.92);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* 3. LA RESPECTIVA "X" PARA REGRESAR/CERRAR ARRIBA A LA DERECHA */
+.close-modal {
+    position: absolute;
+    top: 1rem;
+    /* Separación del techo de la caja */
+    right: 1.5rem;
+    /* Separación de la pared derecha */
+    font-size: 2rem;
+    /* Tamaño grande y táctil */
+    font-weight: 300;
+    color: #94A3B8;
+    /* Gris elegante */
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Efecto visual cuando el staff pasa el mouse o toca la X */
+.close-modal:hover {
+    color: #1E293B;
+    /* Se vuelve negro/oscuro */
+    transform: scale(1.15);
+    /* Crece un poquito para indicar que es clickeable */
+}
+
+/* ==========================================================================
+   FIX DESIGN: AJUSTE DE MARGENES Y RESPONSIVIDAD DEL CANVAS DE FIRMA
+   ========================================================================== */
+
+/* Asegura que todos los elementos calculen su tamaño incluyendo padding y bordes */
+.modal-content,
+.canvas-container,
+#canvas-firma {
+    box-sizing: border-box;
+}
+
+/* El contenedor gris con líneas punteadas */
+.canvas-container {
+    background-color: #F1F5F9;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 2px dashed #CBD5E1;
+    width: 100%;
+
+    /* Centrado interno absoluto */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1.5rem auto;
+}
+
+/* El lienzo blanco para firmar */
+#canvas-firma {
+    background-color: #ffffff;
+    border: 1px solid #94A3B8;
+    border-radius: 0.375rem;
+    display: block;
+
+    /* CRÍTICO: Si la pantalla es chica, se encoge mágicamente sin salirse */
+    max-width: 100%;
+    height: auto;
+
+    cursor: crosshair;
+    touch-action: none;
+    /* Evita que la tableta haga scroll mientras firman */
+}
+
+/* Separación estética para los textos y campos dentro del modal */
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #1E293B;
+}
+
+.modal-athlete-summary {
+    background-color: #F8FAFC;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #E2E8F0;
+    margin-bottom: 1rem;
+}

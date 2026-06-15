@@ -1,3 +1,18 @@
+<?php
+session_start();
+
+// Bloque anti-caché: Obliga al navegador a consultar al servidor siempre
+header("Cache-Control: no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+
+// Solo permitimos el acceso a los operadores de mesa (Staff)
+if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Staff') {
+    header('Location: index.php');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -17,7 +32,7 @@
         </div>
         <div class="navbar-user">
             <span class="user-badge staff-mode">Staff (Mesa 1)</span>
-            <button id="btn-logout" class="btn-logout">Salir</button>
+            <button id="btn-logout" class="btn-logout" onclick="window.location.href='api/logout.php'">Salir</button>
         </div>
     </header>
 
@@ -42,55 +57,8 @@
             </div>
         </section>
 
-        <div class="table-responsive border-card">
-            <table class="admin-table table-staff-aligned">
-                <thead>
-                    <tr>
-                        <th>Folio / No.</th>
-                        <th>Nombre Completo</th>
-                        <th>Categoría / Disciplina</th>
-                        <th>Estatus</th>
-                        <th class="text-center">Acción</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body-participants">
-
-                    <tr>
-                        <td><strong>#1024</strong></td>
-                        <td class="td-athlete-name">José David Solís Rangel</td>
-                        <td>Libre Varonil (10K)</td>
-                        <td><span class="badge-status-kit pending">Pendiente</span></td>
-                        <td class="text-center">
-                            <button class="btn btn-primary btn-action-kit" data-id="1024" data-name="José David Solís Rangel">
-                                Entregar Kit
-                            </button>
-                        </td>
-                    </tr>
-
-                    <tr class="row-completed">
-                        <td><strong>#1025</strong></td>
-                        <td class="td-athlete-name">Carlos Cruz García</td>
-                        <td>Master Varonil (10K)</td>
-                        <td><span class="badge-status-kit delivered">Entregado</span></td>
-                        <td class="text-center">
-                            <button class="btn btn-disabled btn-action-kit" disabled>✔️ Entregado</button>
-                        </td>
-                    </tr>
-
-                    <tr class="row-changed-active">
-                        <td><strong>#1026</strong></td>
-                        <td class="td-athlete-name">Stephanie Villanueva Cruz</td>
-                        <td>Libre Femenil (10K)</td>
-                        <td><span class="badge-status-kit delivered">Entregado</span></td>
-                        <td class="text-center">
-                            <button class="btn btn-warning btn-action-kit" data-id="1026" data-name="Stephanie Villanueva Cruz">
-                                ⚠️ Hacer cambio
-                            </button>
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
+        <div id="resultados-atletas" class="contenedor-tarjetas">
+            <p class="text-center text-muted">Escriba el nombre o folio del atleta para comenzar...</p>
         </div>
     </main>
 
@@ -122,7 +90,105 @@
         </div>
     </div>
 
-    <script src="public/js/staff.js"></script>
+    <!-- MODAL DE FIRMA DIGITAL -->
+    <div id="modal-firma" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="cerrarFirma()">&times;</span>
+            <h2>Confirmación de Entrega</h2>
+
+            <div class="modal-athlete-summary" style="margin-bottom: 1.25rem;">
+                <p>Número de atleta: <b id="modal-folio-txt">-</b></p>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem; text-align: left;">
+                <label for="modal-talla-select" style="font-weight: 700; display: block; margin-bottom: 0.5rem; color: var(--dark-neutral);">
+                    Talla de Playera Entregada:
+                </label>
+                <select id="modal-talla-select" class="form-select" required style="width: 100%; padding: 0.8rem; border: 2px solid var(--border-color); border-radius: 0.5rem;">
+                    <option value="">-- Seleccione una talla entregada --</option>
+                    <option value="CH">Chica (CH)</option>
+                    <option value="M">Mediana (M)</option>
+                    <option value="G">Grande (G)</option>
+                    <option value="XG">Extra Grande (XG)</option>
+                </select>
+            </div>
+
+            <label style="font-weight: 700; display: block; margin-bottom: 0.5rem; text-align: left; color: var(--dark-neutral);">
+                Firma Digital de Conformidad:
+            </label>
+            <div class="canvas-container" style="background-color: #F1F5F9; padding: 1rem; border-radius: 0.5rem; border: 2px dashed #CBD5E1;">
+                <canvas id="canvas-firma" width="450" height="200" style="background-color: white; border: 1px solid #94A3B8; border-radius: 0.375rem; display: block; margin: 0 auto; touch-action: none;"></canvas>
+            </div>
+
+            <div class="modal-actions" style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary-outline btn-sm" id="btn-limpiar">Limpiar Trazo</button>
+                <button type="button" class="btn btn-success" id="btn-guardar-entrega">Confirmar entrega</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE DETALLES -->
+    <div id="modal-detalles" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 480px; box-sizing: border-box;">
+            <span class="close-modal" onclick="cerrarDetalles()">&times;</span>
+
+            <h2 style="color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-top: 0; margin-bottom: 0.5rem;">
+                Resumen de Entrega
+            </h2>
+
+            <div class="detalles-body" style="text-align: left; margin-top: 1.25rem; line-height: 1.7; color: #334155;">
+                <p><b>Folio del Atleta:</b> <span id="det-folio" style="font-weight: 700; color: #0F172A;">-</span></p>
+                <p><b>Nombre Completo:</b> <span id="det-atleta">-</span></p>
+                <p><b>Categoría Inscrita:</b> <span id="det-categoria">-</span></p>
+
+                <p style="margin-bottom: 0.75rem;">
+                    <b>Talla de Playera:</b>
+                    <span id="det-talla" style="font-weight: 700; background-color: #F1F5F9; padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid #CBD5E1;">-</span>
+
+                    <button type="button" id="btn-activar-cambio" onclick="mostrarSeccionCambio()" style="margin-left: 1rem; background: none; border: none; color: #2563EB; cursor: pointer; text-decoration: underline; font-size: 0.85rem; font-weight: 600;">
+                        ✏️ Cambiar Talla
+                    </button>
+                </p>
+
+                <div id="seccion-cambio-talla" style="display: none; background-color: #FFFBEB; border: 1px solid #FDE68A; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.25rem; box-sizing: border-box;">
+                    <label for="det-nueva-talla" style="font-weight: 700; display: block; margin-bottom: 0.4rem; font-size: 0.9rem; color: #B45309;">
+                        Selecciona la Nueva Talla:
+                    </label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <select id="det-nueva-talla" style="padding: 0.5rem; border-radius: 6px; border: 1px solid #CBD5E1; flex-grow: 1; background-color: white; font-family: inherit;">
+                            <option value="CH">Chica (CH)</option>
+                            <option value="M">Mediana (M)</option>
+                            <option value="G">Grande (G)</option>
+                            <option value="XG">Extra Grande (XG)</option>
+                        </select>
+                        <button type="button" onclick="procesarCambioTalla()" style="background-color: #D97706; color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 700; cursor: pointer; transition: background 0.2s;">
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+
+                <p><b>Fecha y Hora de Validación:</b> <span id="det-fecha">-</span></p>
+
+                <p><b>Kit Gestionado por:</b> <span id="det-staff" style="color: #2563EB; font-weight: 700;">-</span></p>
+
+                <label style="font-weight: 700; display: block; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #0F172A;">
+                    Firma Digital de Conformidad:
+                </label>
+                <div style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 0.5rem; padding: 0.75rem; text-align: center; box-sizing: border-box;">
+                    <img id="det-firma-img" src="" alt="Firma Digital" style="max-width: 100%; height: auto; background-color: #ffffff; border: 1px solid #94A3B8; border-radius: 0.375rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); display: block; margin: 0 auto;">
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top: 1.5rem; display: flex; justify-content: center; width: 100%;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarDetalles()" style="padding: 0.6rem 2.5rem; border-radius: 0.5rem; cursor: pointer; font-weight: 600; border: 1px solid #CBD5E1; background-color: #F8FAFC; color: #334155;">
+                    Cerrar Ventana
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="public/js/buscador.js"></script>
+    <script src="public/js/firma.js"></script>
+    <script src="public/js/detalles.js"></script>
 </body>
 
 </html>
