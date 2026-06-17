@@ -11,6 +11,8 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administra
     header('Location: index.php');
     exit();
 }
+// Capturamos el ID del evento que se está consultando
+$evento_id = isset($_GET['id']) ? intval($_GET['id']) : 1;
 ?>
 
 <!DOCTYPE html>
@@ -24,6 +26,9 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administra
 </head>
 
 <body class="bg-light">
+
+    <!-- CRÍTICO: Este input oculto le permitirá a JavaScript saber qué evento estamos auditando -->
+    <input type="hidden" id="hdn-evento-id" value="<?php echo $evento_id; ?>">
 
     <header class="navbar">
         <div class="navbar-brand">
@@ -50,20 +55,21 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administra
         </section>
 
         <section class="metrics-grid">
-            <div class="metric-card card-blue">
-                <h3>Inscritos Oficiales</h3>
-                <p>1,500</p>
-                <span class="card-footer-text">Atletas cargados desde .CSV</span>
+            <div class="card">
+                <h3>Total Inscritos</h3>
+                <p id="lbl-total-atletas">-</p>
             </div>
-            <div class="metric-card card-green">
+            <div class="card">
                 <h3>Kits Entregados</h3>
-                <p>950</p>
-                <span class="card-footer-text">63.3% del total liberado</span>
+                <p id="lbl-entregados">-</p>
             </div>
-            <div class="metric-card card-yellow">
-                <h3>Kits Pendientes</h3>
-                <p>550</p>
-                <span class="card-footer-text">Por recolectar en mesas</span>
+            <div class="card">
+                <h3>Pendientes por Recoger</h3>
+                <p id="lbl-pendientes">-</p>
+            </div>
+            <div class="card">
+                <h3>Incidencias / Cambios</h3>
+                <p id="lbl-cambios">-</p>
             </div>
         </section>
 
@@ -74,12 +80,39 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administra
                 <p class="section-desc">Proporción visual de paquetes recolectados contra el inventario restante.</p>
 
                 <div class="chart-placeholder-box">
-                    <div class="mock-pie-chart">
-                        <div class="pie-center-text">63.3%<br><span>Entregado</span></div>
+                    <div class="progress-container">
+                        <span id="txt-porcentaje-global">0% Completado</span>
+                        <div class="progress-bar-background">
+                            <!-- El JS alterará el width en porcentaje de este div -->
+                            <div id="barra-progreso-global" class="progress-bar-fill" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-scale-labels">
+                            <span>0% Inicio</span>
+                            <span>50%</span>
+                            <span>100% Meta</span>
+                        </div>
                     </div>
-                    <div class="chart-legends">
-                        <div class="legend-item"><span class="legend-dot green"></span> Entregados (950)</div>
-                        <div class="legend-item"><span class="legend-dot yellow"></span> Pendientes (550)</div>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h2>Inventario por playeras entregadas</h2>
+                <div class="tallas-stats-box" style="margin-top: 1.25rem; font-size: 0.95rem; color: #334155;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.5rem; border-bottom: 1px solid #E2E8F0;">
+                        <span>👕 Talla Chica (CH):</span>
+                        <b id="txt-talla-ch" style="color: #0F172A; font-weight: 700;">0 pzas</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.5rem; border-bottom: 1px solid #E2E8F0;">
+                        <span>👕 Talla Mediana (M):</span>
+                        <b id="txt-talla-m" style="color: #0F172A; font-weight: 700;">0 pzas</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.5rem; border-bottom: 1px solid #E2E8F0;">
+                        <span>👕 Talla Grande (G):</span>
+                        <b id="txt-talla-g" style="color: #0F172A; font-weight: 700;">0 pzas</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.5rem;">
+                        <span>👕 Talla Extra Grande (XG):</span>
+                        <b id="txt-talla-xg" style="color: #0F172A; font-weight: 700;">0 pzas</b>
                     </div>
                 </div>
             </div>
@@ -87,35 +120,10 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administra
             <div class="admin-card">
                 <h2>Distribución Logística por Mesas</h2>
                 <p class="section-desc">Monitoreo del volumen total de kits validados por estación de atención.</p>
-
-                <div class="chart-placeholder-box vertical-align">
-                    <div class="mock-bar-row">
-                        <span class="bar-label">Mesa 1 (Reymundo)</span>
-                        <div class="bar-track">
-                            <div class="bar-fill blue" style="width: 85%;"></div>
-                        </div>
-                        <span class="bar-value">340 kits</span>
-                    </div>
-                    <div class="mock-bar-row">
-                        <span class="bar-label">Mesa 2 (Diego)</span>
-                        <div class="bar-track">
-                            <div class="bar-fill blue" style="width: 70%;"></div>
-                        </div>
-                        <span class="bar-value">280 kits</span>
-                    </div>
-                    <div class="mock-bar-row">
-                        <span class="bar-label">Mesa 3 (Stephanie)</span>
-                        <div class="bar-track">
-                            <div class="bar-fill blue" style="width: 60%;"></div>
-                        </div>
-                        <span class="bar-value">240 kits</span>
-                    </div>
-                    <div class="mock-bar-row">
-                        <span class="bar-label">Mesa 4 (Jorge)</span>
-                        <div class="bar-track">
-                            <div class="bar-fill blue" style="width: 25%;"></div>
-                        </div>
-                        <span class="bar-value">90 kits</span>
+                <div class="staff-ranking-box">
+                    <h3>Rendimiento de Mesas en Vivo</h3>
+                    <div id="lista-rendimiento-staff">
+                        <!-- Aquí JavaScript pintará las filas dinámicamente -->
                     </div>
                 </div>
             </div>
@@ -123,7 +131,7 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administra
         </section>
 
     </main>
-
+    <script src="public/js/dashboard.js?v=1.2"></script>
 </body>
 
 </html>

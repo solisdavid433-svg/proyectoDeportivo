@@ -31,7 +31,7 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
             <span>Módulo Encargado (Supervisor)</span>
         </div>
         <div class="navbar-user">
-            <span class="user-badge supervisor">Encargado</span>
+            <span class="user-badge"><?php echo $_SESSION['usuario_nombre']; ?></span>
             <button id="btn-logout" class="btn-logout" onclick="window.location.href='api/logout.php'">Cerrar Sesión</button>
         </div>
     </header>
@@ -54,18 +54,33 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
         <section class="metrics-grid">
             <div class="metric-card card-blue">
                 <h3>Total Inscritos</h3>
-                <p id="total-inscritos">1,250</p>
+                <p id="total-inscritos">-</p>
                 <span class="card-footer-text">Competidores totales</span>
             </div>
             <div class="metric-card card-green">
                 <h3>Kits Entregados</h3>
-                <p id="total-entregados">450</p>
-                <span class="card-footer-text">Avance del 36%</span>
+                <p id="total-entregados">-</p>
+                <span id="txt-porcentaje-encargado" class="card-footer-text">Calculando...</span>
             </div>
             <div class="metric-card card-yellow">
                 <h3>Kits Pendientes</h3>
-                <p id="total-pendientes">800</p>
+                <p id="total-pendientes">-</p>
                 <span class="card-footer-text">En inventario de mesas</span>
+            </div>
+        </section>
+
+        <section class="admin-card full-width" style="margin-bottom: 2rem;">
+            <div class="card-header-box">
+                <div>
+                    <h2>Mesa de Incidencias / Reasignación de Categoría</h2>
+                    <p class="section-desc">Busque un competidor por su folio o nombre para corregir errores de registro o cambios de bloque de salida.</p>
+                </div>
+            </div>
+            <div class="search-box-container" style="margin-top: 1rem;">
+                <input type="text" id="search-supervisor" placeholder="🔍 Ingrese Folio o Nombre del atleta a corregir..." style="width: 100%; padding: 0.9rem; border-radius: 0.5rem; border: 2px solid #CBD5E1; font-size: 1.05rem; box-sizing: border-box;">
+            </div>
+            <div id="resultados-supervisor" class="contenedor-tarjetas" style="margin-top: 1rem; display: grid; gap: 1rem;">
+                <p class="text-center text-muted" style="grid-column: 1/-1;">Escriba los datos del atleta arriba para abrir las herramientas de edición.</p>
             </div>
         </section>
 
@@ -75,7 +90,7 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
                     <h2>Productividad del Staff en Campo</h2>
                     <p class="section-desc">Monitoree cuántos paquetes ha validado individualmente cada operador en las mesas.</p>
                 </div>
-                <span class="table-summary-badge">4 Mesas Activas</span>
+                <span class="table-summary-badge" id="lbl-mesas-activas">Monitoreando...</span>
             </div>
 
             <div class="table-responsive">
@@ -85,38 +100,12 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
                             <th>Mesa</th>
                             <th>Nombre del Operador (Staff)</th>
                             <th class="text-center">Kits Validados con Firma</th>
-                            <th>Última Actividad Registrada</th>
-                            <th>Estatus Conexión</th>
+                            <th>Estatus Operativo</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tabla-productividad-body">
                         <tr>
-                            <td><span class="table-badge-mesa">Mesa 1</span></td>
-                            <td><strong>Reymundo Pérez</strong></td>
-                            <td class="text-center text-bold text-blue">150 kits</td>
-                            <td>Hace 2 min (Folio #1045)</td>
-                            <td><span class="badge-status online">● Activo</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="table-badge-mesa">Mesa 2</span></td>
-                            <td><strong>Diego Granados</strong></td>
-                            <td class="text-center text-bold text-blue">120 kits</td>
-                            <td>Hace 5 min (Folio #1021)</td>
-                            <td><span class="badge-status online">● Activo</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="table-badge-mesa">Mesa 3</span></td>
-                            <td><strong>Stephanie Villanueva</strong></td>
-                            <td class="text-center text-bold text-blue">115 kits</td>
-                            <td>Hace 1 min (Folio #1050)</td>
-                            <td><span class="badge-status online">● Activo</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="table-badge-mesa">Mesa 4</span></td>
-                            <td><strong>Jorge Salgado</strong></td>
-                            <td class="text-center text-bold text-blue">65 kits</td>
-                            <td>Hace 18 min (Folio #0988)</td>
-                            <td><span class="badge-status idle">● Inactivo</span></td>
+                            <td colspan="4" class="text-center text-muted">Cargando datos de productividad del equipo...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -125,7 +114,32 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
 
     </main>
 
-    <script src="public/js/encargado.js"></script>
+    <div id="modal-supervisor" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 450px; box-sizing: border-box;">
+            <span class="close-modal" onclick="cerrarModalSupervisor()">&times;</span>
+            <h2>Reasignar Categoría</h2>
+            <p style="margin-bottom: 1.5rem;">Atleta Folio: <b id="txt-folio-sup">-</b></p>
+
+            <div class="form-group" style="text-align: left; margin-bottom: 1.5rem;">
+                <label for="select-categoria-sup" style="font-weight: 700; display: block; margin-bottom: 0.5rem; color: #1E293B;">
+                    Nueva Categoría del Competidor:
+                </label>
+                <select id="select-categoria-sup" style="width: 100%; padding: 0.8rem; border: 2px solid #CBD5E1; border-radius: 0.5rem; background-color: white; font-family: inherit; font-size: 1rem;">
+                    <option value="Libre Varonil">Libre Varonil</option>
+                    <option value="Libre Femenil">Libre Femenil</option>
+                    <option value="Master Femenil">Master Femenil</option>
+                    <option value="Juvenil B">Juvenil B</option>
+                </select>
+            </div>
+
+            <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%;">
+                <button type="button" onclick="cerrarModalSupervisor()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.6rem 2rem; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">Cancelar</button>
+                <button type="button" onclick="guardarCambioCategoria()" style="background-color: #D97706; color: white; border: none; padding: 0.6rem 2rem; border-radius: 0.5rem; font-weight: 700; cursor: pointer;">Guardar Modificación</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="public/js/encargado.js?v=1.3"></script>
 </body>
 
 </html>

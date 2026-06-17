@@ -31,31 +31,24 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Staff') {
             <span class="event-title-active">Morelia 10K - Entrega de Kits</span>
         </div>
         <div class="navbar-user">
-            <span class="user-badge staff-mode">Staff (Mesa 1)</span>
+            <span class="user-badge"><?php echo $_SESSION['usuario_nombre']; ?></span>
             <button id="btn-logout" class="btn-logout" onclick="window.location.href='api/logout.php'">Salir</button>
         </div>
     </header>
 
     <main class="staff-container">
 
-        <section class="search-section">
-            <div class="search-box-wrapper">
-                <input type="text" id="search-input" class="search-input-giant" placeholder="🔍 Busque por Nombre, Folio o Número de Competidor..." autocomplete="off">
-            </div>
-            <button id="btn-trigger-qr" class="btn btn-secondary btn-qr">
-                <span class="qr-icon">📷</span> Escanear QR
-            </button>
-        </section>
+        <div class="search-box-container" style="margin: 1.5rem 0; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <input type="text" id="search-input" placeholder="🔍 Ingrese Folio o Nombre completo del atleta..." style="flex-grow: 1; padding: 1rem; border-radius: 0.5rem; border: 2px solid #CBD5E1; font-size: 1.1rem;">
 
-        <section id="qr-scanner-container" class="qr-scanner-box hidden">
-            <div class="qr-scanner-header">
-                <h3>Escáner de Código QR Activo</h3>
-                <button id="btn-close-qr" class="btn-close-sm">✕</button>
-            </div>
-            <div id="camera-preview" class="camera-preview-window">
-                <p class="camera-placeholder">Esperando acceso a la cámara de la tableta...</p>
-            </div>
-        </section>
+            <button type="button" id="btn-toggle-qr" onclick="toggleQRScanner()" style="background-color: #0F172A; color: white; border: none; padding: 0 1.5rem; border-radius: 0.5rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 1rem;">
+                📷 Escanear QR
+            </button>
+        </div>
+
+        <div id="qr-reader-container" style="display: none; max-width: 400px; margin: 0 auto 1.5rem auto; background-color: #000000; border-radius: 0.75rem; overflow: hidden; border: 3px solid #0F172A; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+            <div id="qr-reader" style="width: 100%;"></div>
+        </div>
 
         <div id="resultados-atletas" class="contenedor-tarjetas">
             <p class="text-center text-muted">Escriba el nombre o folio del atleta para comenzar...</p>
@@ -186,9 +179,14 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Staff') {
             </div>
         </div>
     </div>
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
     <script src="public/js/buscador.js"></script>
     <script src="public/js/firma.js"></script>
     <script src="public/js/detalles.js"></script>
+
+    <script src="public/js/qr.js?v=1.0"></script>
 </body>
 
 </html>

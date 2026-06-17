@@ -13,6 +13,14 @@
     --white: #FFFFFF;
     --border-color: #CBD5E1;
     /* Gris suave para contornos de inputs */
+    --success-color: #10B981;
+    /* Verde para estados de éxito */
+    --success-light: #DCFCE7;
+    /* Verde suave para fondos de estado */
+    --warning-color: #F59E0B;
+    /* Amarillo/naranja para advertencias */
+    --warning-light: #FEF3C7;
+    /* Fondo suave para estados de advertencia */
 }
 
 /* ==========================================================================
@@ -1210,4 +1218,77 @@ body {
     border-radius: 0.375rem;
     border: 1px solid #E2E8F0;
     margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   DASHBOARD VISUAL UPGRADE: BARRA DE PROGRESO PREMIUM
+   ========================================================================== */
+
+/* Contenedor principal de la gráfica */
+.chart-placeholder-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2.5rem 1.5rem;
+    min-height: 220px;
+    box-sizing: border-box;
+}
+
+.progress-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+/* El texto del porcentaje gigante arriba de la barra */
+#txt-porcentaje-global {
+    font-size: 2.5rem;
+    /* Más grande e imponente */
+    font-weight: 800;
+    color: var(--secondary-color, #1A467D);
+    /* Usa tu azul corporativo */
+    display: block;
+    margin-bottom: 1.25rem;
+    letter-spacing: -1px;
+    transition: all 0.3s ease;
+}
+
+/* El carril o fondo de la barra de progreso */
+.progress-bar-background {
+    background-color: #E2E8F0;
+    /* Gris suave de fondo */
+    border-radius: 50px;
+    height: 26px;
+    /* Más gruesa para que tenga presencia física */
+    width: 100%;
+    overflow: hidden;
+    box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.1);
+    /* Sombra interna para profundidad */
+    position: relative;
+    border: 1px solid #CBD5E1;
+}
+
+/* El relleno dinámico que se mueve con el JS */
+.progress-bar-fill {
+    /* Un degradado lineal elegante con tus colores de marca */
+    background: linear-gradient(90deg, #1A467D 0%, #2563EB 100%);
+    height: 100%;
+    border-radius: 50px;
+
+    /* Animación limpia: cuando cambie de 0% a 100%, se deslizará de forma elástica */
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+/* Mini etiquetas informativas debajo de la barra */
+.progress-scale-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    color: #64748B;
+    font-weight: 700;
+    padding: 0 0.25rem;
 }
