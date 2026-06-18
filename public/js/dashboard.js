@@ -41,12 +41,13 @@ async function cargarEstadisticas() {
             textoProgreso.innerText = `${r.porcentaje}% Completado`;
         }
 
-        // 3. ACTUALIZAR INVENTARIO DE PLAYERAS (Gráfica de barras CSS)
-        // Buscamos los contenedores de texto para inyectar las cantidades entregadas
-        if (document.getElementById('txt-talla-ch')) document.getElementById('txt-talla-ch').innerText = `${t.CH} pzas`;
-        if (document.getElementById('txt-talla-m')) document.getElementById('txt-talla-m').innerText = `${t.M} pzas`;
-        if (document.getElementById('txt-talla-g')) document.getElementById('txt-talla-g').innerText = `${t.G} pzas`;
-        if (document.getElementById('txt-talla-xg')) document.getElementById('txt-talla-xg').innerText = `${t.XG} pzas`;
+        // 3. ACTUALIZAR INVENTARIO DE PLAYERAS DINÁMICO (FORMATO STOCK: ENTREGADOS / CONFIGURADOS)
+        if (document.getElementById('txt-talla-xs')) document.getElementById('txt-talla-xs').innerText = `${t.XS.entregados} / ${t.XS.total}`;
+        if (document.getElementById('txt-talla-ch')) document.getElementById('txt-talla-ch').innerText = `${t.CH.entregados} / ${t.CH.total}`;
+        if (document.getElementById('txt-talla-m')) document.getElementById('txt-talla-m').innerText = `${t.M.entregados} / ${t.M.total}`;
+        if (document.getElementById('txt-talla-g')) document.getElementById('txt-talla-g').innerText = `${t.G.entregados} / ${t.G.total}`;
+        if (document.getElementById('txt-talla-xg')) document.getElementById('txt-talla-xg').innerText = `${t.XG.entregados} / ${t.XG.total}`;
+        if (document.getElementById('txt-talla-2xl')) document.getElementById('txt-talla-2xl').innerText = `${t['2XL'].entregados} / ${t['2XL'].total}`;
 
         // 4. GENERAR TABLA/LISTA DE RENDIMIENTO DEL STAFF
         const contenedorStaff = document.getElementById('lista-rendimiento-staff');

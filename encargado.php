@@ -11,6 +11,9 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
     header('Location: index.php');
     exit();
 }
+
+//  CONEXIÓN MAESTRA CON TU ARCHIVO CENTRAL DE DB
+require_once 'config/db.php';
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +34,7 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
             <span>Módulo Encargado (Supervisor)</span>
         </div>
         <div class="navbar-user">
-            <span class="user-badge"><?php echo $_SESSION['usuario_nombre']; ?></span>
+            <span class="user-badge"><?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></span>
             <button id="btn-logout" class="btn-logout" onclick="window.location.href='api/logout.php'">Cerrar Sesión</button>
         </div>
     </header>
@@ -41,9 +44,27 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
         <section class="supervisor-controls">
             <div class="control-box-select">
                 <label for="select-evento-activo" class="label-bold">Monitorear Competencia:</label>
-                <select id="select-evento-activo" class="form-select">
-                    <option value="1">Carrera Atlética Morelia 10K 2026 (Activo)</option>
-                    <option value="2">Triatlón Regional Cuitzeo 2026</option>
+                <select id="select-evento-activo" class="form-select" onchange="cargarEstadisticasSupervisor()">
+                    <?php
+                    // EXTRACCIÓN MAESTRA: Trae los circuitos deportivos directamente de SQL Server
+                    $sql_sel = "SELECT id, nombre_evento FROM tbl_eventos ORDER BY id DESC";
+                    $stmt_sel = sqlsrv_query($conn, $sql_sel);
+
+                    if ($stmt_sel !== false) {
+                        $index = 0;
+                        while ($ev = sqlsrv_fetch_array($stmt_sel, SQLSRV_FETCH_ASSOC)) {
+                            $index++;
+                            // Marcamos por defecto el evento más reciente como activo al entrar
+                            $selected = ($index === 1) ? 'selected' : '';
+                            echo "<option value='" . $ev['id'] . "' " . $selected . ">" . htmlspecialchars($ev['nombre_evento']) . "</option>";
+                        }
+                        if ($index === 0) {
+                            echo "<option value=''>-- No hay competencias creadas --</option>";
+                        }
+                    } else {
+                        echo "<option value=''>Error al conectar con SQL Server</option>";
+                    }
+                    ?>
                 </select>
             </div>
             <div class="refresh-indicator">
@@ -51,22 +72,32 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
             </div>
         </section>
 
-        <section class="metrics-grid">
+        <section class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+
             <div class="metric-card card-blue">
                 <h3>Total Inscritos</h3>
                 <p id="total-inscritos">-</p>
                 <span class="card-footer-text">Competidores totales</span>
             </div>
+
             <div class="metric-card card-green">
                 <h3>Kits Entregados</h3>
                 <p id="total-entregados">-</p>
                 <span id="txt-porcentaje-encargado" class="card-footer-text">Calculando...</span>
             </div>
+
             <div class="metric-card card-yellow">
                 <h3>Kits Pendientes</h3>
                 <p id="total-pendientes">-</p>
                 <span class="card-footer-text">En inventario de mesas</span>
             </div>
+
+            <div class="metric-card card-purple" style="background-color: #F5F3FF; border-left: 5px solid #7C3AED; color: #5B21B6;">
+                <h3 style="color: #6D28D9;">Cambios Realizados</h3>
+                <p id="total-cambios" style="color: #4C1D95;">-</p>
+                <span class="card-footer-text" style="color: #7C3AED;">Incidencias textiles / reasignados</span>
+            </div>
+
         </section>
 
         <section class="admin-card full-width" style="margin-bottom: 2rem;">
@@ -77,7 +108,7 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
                 </div>
             </div>
             <div class="search-box-container" style="margin-top: 1rem;">
-                <input type="text" id="search-supervisor" placeholder="🔍 Ingrese Folio o Nombre del atleta a corregir..." style="width: 100%; padding: 0.9rem; border-radius: 0.5rem; border: 2px solid #CBD5E1; font-size: 1.05rem; box-sizing: border-box;">
+                <input type="text" id="search-supervisor" oninput="buscarAtletaSupervisor()" placeholder="🔍 Ingrese Folio o Nombre del atleta a corregir..." style="width: 100%; padding: 0.9rem; border-radius: 0.5rem; border: 2px solid #CBD5E1; font-size: 1.05rem; box-sizing: border-box;">
             </div>
             <div id="resultados-supervisor" class="contenedor-tarjetas" style="margin-top: 1rem; display: grid; gap: 1rem;">
                 <p class="text-center text-muted" style="grid-column: 1/-1;">Escriba los datos del atleta arriba para abrir las herramientas de edición.</p>
@@ -139,7 +170,7 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
         </div>
     </div>
 
-    <script src="public/js/encargado.js?v=1.3"></script>
+    <script src="public/js/encargado.js?v=1.4"></script>
 </body>
 
 </html>

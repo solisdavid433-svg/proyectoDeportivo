@@ -9,7 +9,6 @@ session_start();
 
 /** @var resource $conn */
 
-
 header('Content-Type: application/json');
 require_once '../config/db.php';
 
@@ -22,8 +21,15 @@ if (!isset($_SESSION['usuario_rol'])) {
 // Capturamos el término de búsqueda que viene por la URL (ej: ?termino=carlos)
 $termino = isset($_GET['termino']) ? trim($_GET['termino']) : '';
 
-if (empty($termino)) {
-    echo json_encode([]); // Si está vacío, regresamos un arreglo vacío
+$evento_id = isset($_GET['evento_id']) ? intval($_GET['evento_id']) : 0;
+
+if ($evento_id === 0 && isset($_SESSION['evento_id_activo'])) {
+    $evento_id = intval($_SESSION['evento_id_activo']);
+}
+
+//Validacion de salida segura
+if (empty($termino) || $evento_id === 0) {
+    echo json_encode([]);
     exit;
 }
 
@@ -31,7 +37,7 @@ if (empty($termino)) {
 $sql = "SELECT c.folio, c.nombre AS nombre, c.categoria, c.estatus_entrega, e.hubo_cambio
         FROM tbl_competidores c
         LEFT JOIN tbl_entregas_kits e ON c.folio = e.competidor_id
-        WHERE (c.folio = ? OR c.nombre COLLATE Modern_Spanish_CI_AI LIKE ?)
+        WHERE (c.folio = ? OR c.nombre COLLATE Modern_Spanish_CI_AI LIKE ?) AND c.evento_id = ?
         ORDER BY c.nombre ASC";
 
 // Agregamos los comodines '%' para que busque en cualquier parte del nombre
@@ -40,7 +46,7 @@ $buscarNombre = "%" . $termino . "%";
 // El primer parámetro intenta evaluar si es un número (folio), si no, mandamos un valor neutro
 $buscarFolio = is_numeric($termino) ? intval($termino) : -1;
 
-$params = array($buscarFolio, $buscarNombre);
+$params = array($buscarFolio, $buscarNombre, $evento_id);
 $stmt = sqlsrv_query($conn, $sql, $params);
 
 if ($stmt === false) {

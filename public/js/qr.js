@@ -19,7 +19,7 @@ async function toggleQRScanner() {
 
     // SI ESTÁ APAGADO, ENCENDEMOS LA CÁMARA
     contenedor.style.display = 'block';
-    boton.innerText = "❌ Cerrar Cámara";
+    boton.innerText = "Cerrar Cámara";
     boton.style.backgroundColor = "#DC2626"; // Cambia a rojo dinámicamente
 
     html5Qrcode = new Html5Qrcode("qr-reader");
@@ -40,7 +40,7 @@ async function toggleQRScanner() {
         );
     } catch (err) {
         console.error("Error al acceder a la cámara del dispositivo:", err);
-        alert("⚠️ No se pudo acceder a la cámara. Verifique los permisos de su navegador.");
+        alert("No se pudo acceder a la cámara. Verifique los permisos de su navegador.");
         apagarCamara();
     }
 }

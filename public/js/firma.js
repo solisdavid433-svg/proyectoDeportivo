@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Control de seguridad: Si no encuentra el canvas, avisa pero NO rompe el archivo
     if (!canvas || !modal) {
-        console.error("❌ Error: No se encontró el modal o el canvas en el HTML. Revisa los IDs.");
+        console.error("Error: No se encontró el modal o el canvas en el HTML. Revisa los IDs.");
         return;
     }
 
@@ -110,12 +110,12 @@ async function procesarEntrega() {
     const tallaSeleccionada = document.getElementById('modal-talla-select').value;
 
     if (!tallaSeleccionada) {
-        alert("⚠️ Por favor, seleccione la talla de playera que se va a entregar.");
+        alert("Por favor, seleccione la talla de playera que se va a entregar.");
         return;
     }
 
     if (firmaBase64.length < 2000) {
-        alert("⚠️ Por favor, el competidor debe firmar para recibir su kit.");
+        alert("Por favor, el competidor debe firmar para recibir su kit.");
         return;
     }
 
@@ -134,15 +134,15 @@ async function procesarEntrega() {
         const data = await response.json();
 
         if (data.success) {
-            alert("✔️ ¡Kit y playera registrados con éxito!");
+            alert("¡Kit y playera registrados con éxito!");
             cerrarFirma();
             // Refrescamos el buscador automáticamente
             document.getElementById('search-input').dispatchEvent(new Event('input'));
         } else {
-            alert("❌ Error: " + data.message);
+            alert("Error: " + data.message);
         }
     } catch (error) {
         console.error(error);
-        alert("❌ Error de comunicación con el servidor.");
+        alert("Error de comunicación con el servidor.");
     }
 }

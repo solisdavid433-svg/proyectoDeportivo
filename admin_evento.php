@@ -96,23 +96,33 @@ $evento_id = isset($_GET['id']) ? intval($_GET['id']) : 1;
             </div>
 
             <div class="admin-card">
-                <h2>Inventario por playeras entregadas</h2>
+                <h2>Inventario de Playeras Entregadas</h2>
+                <p class="section-desc">Volumen de prendas repartidas por tamaño para el control de stock en almacén.</p>
+
                 <div class="tallas-stats-box" style="margin-top: 1.25rem; font-size: 0.95rem; color: #334155;">
-                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.5rem; border-bottom: 1px solid #E2E8F0;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #E2E8F0;">
+                        <span>👕 Talla Extra Chica (XS):</span>
+                        <b id="txt-talla-xs" style="color: #0F172A; font-weight: 700;">0 / 0</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #E2E8F0;">
                         <span>👕 Talla Chica (CH):</span>
-                        <b id="txt-talla-ch" style="color: #0F172A; font-weight: 700;">0 pzas</b>
+                        <b id="txt-talla-ch" style="color: #0F172A; font-weight: 700;">0 / 0</b>
                     </div>
-                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.5rem; border-bottom: 1px solid #E2E8F0;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #E2E8F0;">
                         <span>👕 Talla Mediana (M):</span>
-                        <b id="txt-talla-m" style="color: #0F172A; font-weight: 700;">0 pzas</b>
+                        <b id="txt-talla-m" style="color: #0F172A; font-weight: 700;">0 / 0</b>
                     </div>
-                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.5rem; border-bottom: 1px solid #E2E8F0;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #E2E8F0;">
                         <span>👕 Talla Grande (G):</span>
-                        <b id="txt-talla-g" style="color: #0F172A; font-weight: 700;">0 pzas</b>
+                        <b id="txt-talla-g" style="color: #0F172A; font-weight: 700;">0 / 0</b>
                     </div>
-                    <div style="display: flex; justify-content: space-between; padding: 0.65rem 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; border-bottom: 1px solid #E2E8F0;">
                         <span>👕 Talla Extra Grande (XG):</span>
-                        <b id="txt-talla-xg" style="color: #0F172A; font-weight: 700;">0 pzas</b>
+                        <b id="txt-talla-xg" style="color: #0F172A; font-weight: 700;">0 / 0</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem;">
+                        <span>👕 Talla Doble Extra Grande (2XL):</span>
+                        <b id="txt-talla-2xl" style="color: #0F172A; font-weight: 700;">0 / 0</b>
                     </div>
                 </div>
             </div>

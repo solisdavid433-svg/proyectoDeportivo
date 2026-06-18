@@ -48,9 +48,9 @@ foreach ($usuarios as $u) {
     $stmt = sqlsrv_query($conn, $sql, $params);
 
     if ($stmt) {
-        echo "<p style='color: green;'>✔️ Usuario [{$u['rol']}] creado con éxito. Correo: <b>{$u['correo']}</b> | Contraseña original: <b>{$u['password']}</b></p>";
+        echo "<p style='color: green;'>Usuario [{$u['rol']}] creado con éxito. Correo: <b>{$u['correo']}</b> | Contraseña original: <b>{$u['password']}</b></p>";
     } else {
-        echo "<p style='color: red;'>❌ Error al crear usuario [{$u['rol']}]: </p><pre>";
+        echo "<p style='color: red;'>Error al crear usuario [{$u['rol']}]: </p><pre>";
         print_r(sqlsrv_errors());
         echo "</pre>";
     }
