@@ -21,9 +21,16 @@ if (!isset($_SESSION['usuario_rol'])) {
 // Capturamos el término de búsqueda que viene por la URL (ej: ?termino=carlos)
 $termino = isset($_GET['termino']) ? trim($_GET['termino']) : '';
 
-$evento_id = isset($_GET['evento_id']) ? intval($_GET['evento_id']) : 0;
-
-if ($evento_id === 0 && isset($_SESSION['evento_id_activo'])) {
+// Captura inteligente del Evento ID:
+$evento_id = 0;
+if (isset($_GET['evento_id']) && $_GET['evento_id'] !== '' && $_GET['evento_id'] !== '0') {
+    // Caso Encargado (Select en vivo)
+    $evento_id = intval($_GET['evento_id']);
+} elseif (isset($_SESSION['evento_id_staff'])) {
+    // Caso Staff (Confirmado en su sesión al entrar)
+    $evento_id = intval($_SESSION['evento_id_staff']);
+} elseif (isset($_SESSION['evento_id_activo'])) {
+    // Caso Respaldo Encargado
     $evento_id = intval($_SESSION['evento_id_activo']);
 }
 

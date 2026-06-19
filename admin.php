@@ -63,7 +63,7 @@ require_once 'config/db.php';
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre del Evento</th>
-                                <th>Fecha de Celebración</th>
+                                <th>Fecha</th>
                                 <th>Disciplina</th>
                                 <th>Acciones Logísticas</th>
                             </tr>
@@ -118,6 +118,208 @@ require_once 'config/db.php';
             </section>
 
         </div>
+
+        <div class="admin-grid" style="display: block; width: 100%; margin-top: 2.5rem;">
+            <section class="admin-card full-width">
+                <div class="card-header-box">
+                    <div>
+                        <h2>Módulo de Personal en Campo (Staff)</h2>
+                        <p class="section-desc">Administre las credenciales de los operadores de mesa y asígnelos al circuito correspondiente.</p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="abrirModalNuevoStaff()" style="background-color: #059669; color: white; padding: 0.6rem 1.2rem; font-weight: 700; border-radius: 6px; border: none; cursor: pointer;">
+                        + Registrar Operador
+                    </button>
+                </div>
+
+                <div class="table-responsive" style="margin-top: 1rem;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre del Operador</th>
+                                <th>Correo de Acceso</th>
+                                <th>Competencia Asignada</th>
+                                <th>Acciones de Cuenta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            //CONSULTA CORREGIDA: Apunta a u.correo de acuerdo a tu esquema
+                            $sql_staff = "SELECT u.id, u.nombre, u.correo, u.evento_asignado_id, e.nombre_evento 
+                                            FROM tbl_usuarios u
+                                            LEFT JOIN tbl_eventos e ON u.evento_asignado_id = e.id
+                                            WHERE u.rol = 'Staff'
+                                            ORDER BY u.id DESC";
+                            $stmt_staff = sqlsrv_query($conn, $sql_staff);
+
+                            if ($stmt_staff === false) {
+                                $errors = sqlsrv_errors();
+                                $errorMaster = isset($errors[0]['message']) ? $errors[0]['message'] : 'Error de consistencia';
+                                echo "<tr><td colspan='5' class='text-center text-danger'><b>SQL Server dice:</b> " . htmlspecialchars($errorMaster) . "</td></tr>";
+                            } else {
+                                $cont_staff = 0;
+                                while ($s = sqlsrv_fetch_array($stmt_staff, SQLSRV_FETCH_ASSOC)) {
+                                    $cont_staff++;
+                                    $evento_texto = $s['nombre_evento'] ? htmlspecialchars($s['nombre_evento']) : 'Sin Competencia Asignada';
+                                    $badge_estilo = $s['nombre_evento'] ? "style='background-color: #EEF2F6; color: #1E293B;'" : "style='background-color: #FEF2F2; color: #991B1B; font-weight: bold;'";
+
+                                    echo "<tr>";
+                                    echo "<td><strong>" . str_pad($s['id'], 2, "0", STR_PAD_LEFT) . "</strong></td>";
+                                    echo "<td>" . htmlspecialchars($s['nombre']) . "</td>";
+                                    // Cambiado a $s['correo']
+                                    echo "<td><code>" . htmlspecialchars($s['correo']) . "</code></td>";
+                                    echo "<td><span class='table-badge-mesa' {$badge_estilo}>" . $evento_texto . "</span></td>";
+                                    echo "<td>";
+                                    // En el onclick pasamos $s['correo']
+                                    echo "<button class='btn-action edit' onclick=\"abrirModalEditarStaff(" . $s['id'] . ", '" . addslashes($s['nombre']) . "', '" . addslashes($s['correo']) . "', " . intval($s['evento_asignado_id']) . ")\">📝 Editar</button>";
+                                    echo "<button class='btn-action delete' style='margin-left: 0.5rem;' onclick=\"eliminarStaff(" . $s['id'] . ", '" . addslashes($s['nombre']) . "')\">🗑️</button>";
+                                    echo "</td>";
+                                    echo "</tr>";
+                                }
+
+                                if ($cont_staff === 0) {
+                                    echo "<tr><td colspan='5' class='text-center text-muted'>No hay personal registrado. Presione '+ Registrar Operador'.</td></tr>";
+                                }
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+    </main>
+    <div id="modal-staff" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 480px; box-sizing: border-box;">
+            <span class="close-modal" onclick="cerrarModalStaff()">&times;</span>
+            <h2 id="staff-modal-titulo" style="color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-top: 0;">👤 Registrar Operador</h2>
+            <p class="section-desc" style="margin-bottom: 1.5rem;">Gestione el perfil del personal en campo y defina su mesa operativa.</p>
+
+            <form id="form-staff" onsubmit="guardarStaff(event)" style="text-align: left; display: grid; gap: 1.25rem;">
+                <input type="hidden" id="staff_id" name="staff_id">
+
+                <div class="form-group">
+                    <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Nombre Completo:</label>
+                    <input type="text" id="staff_nombre" name="staff_nombre" required style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Correo de Acceso:</label>
+                        <input type="text" id="staff_usuario" name="staff_usuario" required style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Contraseña:</label>
+                        <input type="password" id="staff_password" name="staff_password" placeholder="Mismo password" style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Competencia por Asignar:</label>
+                    <select id="staff_evento_id" name="staff_evento_id" style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; background: white; box-sizing: border-box;">
+                        <option value="0">-- Ninguno / En Espera de Carrera --</option>
+                        <?php
+                        // Listado dinámico de eventos para el selector del Staff
+                        $sql_ev_list = "SELECT id, nombre_evento FROM tbl_eventos ORDER BY id DESC";
+                        $stmt_ev_list = sqlsrv_query($conn, $sql_ev_list);
+                        if ($stmt_ev_list !== false) {
+                            while ($ev = sqlsrv_fetch_array($stmt_ev_list, SQLSRV_FETCH_ASSOC)) {
+                                echo "<option value='" . $ev['id'] . "'>" . htmlspecialchars($ev['nombre_evento']) . "</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%; margin-top: 0.5rem;">
+                    <button type="button" onclick="cerrarModalStaff()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
+                    <button type="submit" id="btn-submit-staff" style="background-color: #059669; color: white; border: none; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">💾 Guardar Personal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modalStaff = document.getElementById('modal-staff');
+
+        window.abrirModalNuevoStaff = () => {
+            document.getElementById('form-staff').reset();
+            document.getElementById('staff_id').value = "0";
+            document.getElementById('staff-modal-titulo').innerText = "👤 Registrar Operador";
+            document.getElementById('staff_password').placeholder = "Escriba la clave...";
+            document.getElementById('staff_password').required = true;
+            if (modalStaff) modalStaff.style.display = 'flex';
+        };
+
+        window.abrirModalEditarStaff = (id, nombre, usuario, eventoId) => {
+            document.getElementById('form-staff').reset();
+            document.getElementById('staff_id').value = id;
+            document.getElementById('staff_nombre').value = nombre;
+            document.getElementById('staff_usuario').value = usuario;
+            document.getElementById('staff_evento_id').value = eventoId ? eventoId : 0;
+
+            document.getElementById('staff-modal-titulo').innerText = "Modificar Perfil Staff";
+            document.getElementById('staff_password').placeholder = "Dejar en blanco para no cambiar";
+            document.getElementById('staff_password').required = false;
+            if (modalStaff) modalStaff.style.display = 'flex';
+        };
+
+        window.cerrarModalStaff = () => {
+            if (modalStaff) modalStaff.style.display = 'none';
+        };
+
+        async function guardarStaff(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-submit-staff');
+            btn.disabled = true;
+            btn.innerText = "Sincronizando...";
+
+            try {
+                const response = await fetch('api/guardar_staff.php', {
+                    method: 'POST',
+                    body: new FormData(document.getElementById('form-staff'))
+                });
+                const res = await response.json();
+                if (res.success) {
+                    window.location.reload();
+                } else {
+                    alert("Error: " + res.message);
+                    btn.disabled = false;
+                    btn.innerText = "Guardar Personal";
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error de red.");
+                btn.disabled = false;
+            }
+        }
+
+        window.eliminarStaff = async (id, nombre) => {
+            const seguro = confirm(`¿Desea eliminar la cuenta de: "${nombre}"?\nEl operador ya no podrá acceder a las mesas de validación.`);
+            if (!seguro) return;
+
+            try {
+                const response = await fetch('api/eliminar_staff.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id
+                    })
+                });
+                const res = await response.json();
+                if (res.success) {
+                    window.location.reload();
+                } else {
+                    alert("Error: " + res.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error de red.");
+            }
+        };
+    </script>
     </main>
 
     <div id="modal-registro-evento" class="modal" style="display: none;">
@@ -280,14 +482,14 @@ require_once 'config/db.php';
                 } else {
                     alert("Error: " + res.message);
                     btn.disabled = false;
-                    btn.innerText = "💾 Aplicar Cambios";
+                    btn.innerText = " Aplicar Cambios";
                 }
             } catch (error) {
                 console.error(error);
                 alert("Error de red.");
                 btn.disabled = false;
             }
-        }
+        };
 
         // --- MANEJO DE ELIMINACIÓN ---
         window.eliminarEvento = async (id, nombre) => {
@@ -348,13 +550,13 @@ require_once 'config/db.php';
                     resultadoBox.style.border = "1px solid #FCA5A5";
                     resultadoBox.innerHTML = `<b>Error en la transacción:</b> ${res.message}`;
                     btnSubmit.disabled = false;
-                    btnSubmit.innerText = "🚀 Guardar e Importar Padrón";
+                    btnSubmit.innerText = " Guardar e Importar Padrón";
                 }
             } catch (error) {
                 console.error(error);
                 btnSubmit.disabled = false;
             }
-        }
+        };
     </script>
     <script src="public/js/admin.js"></script>
 </body>
