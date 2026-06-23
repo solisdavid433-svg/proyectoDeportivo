@@ -37,13 +37,13 @@ if ($id === 0) {
         exit;
     }
 
-    // 💥 INTEGRACIÓN CRÍTICA: Convertimos la clave a un Hash BCRYPT seguro compatible con tu login.php
+    //INTEGRACIÓN CRÍTICA: Convertimos la clave a un Hash BCRYPT seguro compatible con tu login.php
     $password_encriptada = password_hash($password, PASSWORD_BCRYPT);
 
     $sql = "INSERT INTO tbl_usuarios (nombre, correo, password, rol, estatus, evento_asignado_id) VALUES (?, ?, ?, 'Staff', 1, ?)";
     $params = array($nombre, $usuario, $password_encriptada, $evento_param);
 } else {
-    // 📝 OPERACIÓN: EDICIÓN DE PERFIL
+    // OPERACIÓN: EDICIÓN DE PERFIL
     if (!empty($password)) {
         // Si el admin asignó una contraseña nueva en la edición, también la encriptamos
         $password_encriptada = password_hash($password, PASSWORD_BCRYPT);

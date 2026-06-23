@@ -1,27 +1,66 @@
 // ==========================================================================
 // SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: public/js/encargado.js (CONTROLADOR DE SUPERVISIÓN SIN ERRORES DE REFERENCIA)
+// FILE: public/js/encargado.js (CONTROLADOR DE SUPERVISIÓN DEPURADO)
 // AUTHOR: JOSÉ DAVID SOLÍS RANGEL
 // ==========================================================================
 
 let folioAtletaSeleccionado = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicialización inmediata al cargar la página con el evento seleccionado por defecto
-    const selectEvento = document.getElementById('select-evento-activo');
-    if (selectEvento && selectEvento.value) {
-        cargarEstadisticasSupervisor();
-    }
 
-    // Configurar el auto-refresco automático en vivo cada 15 segundos
-    setInterval(() => {
-        if (selectEvento && selectEvento.value) {
+    const selectEvento = document.getElementById('select-evento-activo');
+    const inputBuscar = document.getElementById('search-supervisor'); //SOLUCIÓN: Declarado globalmente en este bloque
+
+    if (selectEvento) {
+        // Inicialización inmediata al cargar la página
+        if (selectEvento.value) {
             cargarEstadisticasSupervisor();
         }
-    }, 15000);
+
+        // Auto-refresco automático cada 15 segundos
+        setInterval(() => {
+            if (selectEvento.value) {
+                cargarEstadisticasSupervisor();
+            }
+        }, 15000);
+
+        // Escucha si el supervisor cambia de carrera en el select superior
+        selectEvento.addEventListener('change', async (e) => {
+            const nuevoEventoId = e.target.value;
+
+            // Recargamos las métricas visuales del supervisor
+            cargarEstadisticasSupervisor();
+
+            //ENLACE CON REPORTE DE ERRORES:
+            try {
+                const response = await fetch('api/activar_evento.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ evento_id: nuevoEventoId })
+                });
+
+                // Procesamos la respuesta real del servidor PHP
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log(`%cSQL Server: Carrera ${nuevoEventoId} activada globalmente.`, "color: #10B981; font-weight: bold;");
+                } else {
+                    console.error("PHP rechazó la activación:", data.message);
+                    alert("Atención: " + data.message);
+                }
+            } catch (err) {
+                console.error("Error de red o ruta hacia activar_evento.php:", err);
+            }
+
+            //SOLUCIÓN: Ahora inputBuscar ya existe y no romperá el script
+            if (inputBuscar && inputBuscar.value.trim().length >= 2) {
+                buscarAtletaSupervisor();
+            }
+        });
+    }
 });
 
-//  MAESTRO: Esta función limpia el error "cargarEstadisticasSupervisor is not defined"
+// Esta función actualiza el dashboard
 window.cargarEstadisticasSupervisor = async function () {
     const selectEvento = document.getElementById('select-evento-activo');
     const inputBuscar = document.getElementById('search-supervisor');
@@ -39,21 +78,17 @@ window.cargarEstadisticasSupervisor = async function () {
         const r = res.resumen;
         const s = res.staff;
 
-        // Inyección simétrica en las 4 tarjetas de métricas
+
         if (document.getElementById('total-inscritos')) document.getElementById('total-inscritos').innerText = r.total.toLocaleString();
         if (document.getElementById('total-entregados')) document.getElementById('total-entregados').innerText = r.entregados.toLocaleString();
         if (document.getElementById('total-pendientes')) document.getElementById('total-pendientes').innerText = r.pendientes.toLocaleString();
-
-        // Inyección en la 4ª tarjeta morada de control de incidencias
-        if (document.getElementById('total-cambios')) {
-            document.getElementById('total-cambios').innerText = r.cambios.toLocaleString();
-        }
+        if (document.getElementById('total-cambios')) document.getElementById('total-cambios').innerText = r.cambios.toLocaleString();
 
         if (document.getElementById('txt-porcentaje-encargado')) {
             document.getElementById('txt-porcentaje-encargado').innerText = `Avance del ${r.porcentaje}%`;
         }
 
-        // Renderizado de la tabla de rendimiento del Staff
+
         const tbody = document.getElementById('tabla-productividad-body');
         const lblMesas = document.getElementById('lbl-mesas-activas');
 
@@ -78,7 +113,7 @@ window.cargarEstadisticasSupervisor = async function () {
             });
         }
 
-        // Si el supervisor cambia de carrera y ya había texto en el buscador, refrescamos los resultados
+
         if (inputBuscar && inputBuscar.value.trim().length >= 2) {
             buscarAtletaSupervisor();
         }
@@ -88,7 +123,7 @@ window.cargarEstadisticasSupervisor = async function () {
     }
 }
 
-//  MAESTRO: Esta función limpia el error "buscarAtletaSupervisor is not defined"
+// Esta función busca los atletas en la mesa del supervisor
 window.buscarAtletaSupervisor = async function () {
     const inputBuscar = document.getElementById('search-supervisor');
     const selectEvento = document.getElementById('select-evento-activo');
@@ -106,14 +141,14 @@ window.buscarAtletaSupervisor = async function () {
     const eventoId = selectEvento ? selectEvento.value : 0;
 
     try {
-        // Viajamos mandando estrictamente el término y la carrera en pantalla
+
         const response = await fetch(`api/buscar.php?termino=${encodeURIComponent(valor)}&evento_id=${eventoId}`);
         const atletas = await response.json();
 
         contenedor.innerHTML = '';
 
         if (atletas.length === 0) {
-            contenedor.innerHTML = '<p class="text-center text-danger" style="grid-column: 1/-1;">❌ No se encontraron competidores inscritos en esta competencia bajo ese término.</p>';
+            contenedor.innerHTML = '<p class="text-center text-danger" style="grid-column: 1/-1;">❌ No se encontraron competidores.</p>';
             return;
         }
 
@@ -173,8 +208,8 @@ window.guardarCambioCategoria = async () => {
         if (res.success) {
             alert("Categoría reasignada con éxito. Registro guardado en la auditoría interna.");
             cerrarModalSupervisor();
-            buscarAtletaSupervisor(); // Refresca la lista de búsqueda
-            if (selectEvento) cargarEstadisticasSupervisor(); // Refresca las métricas
+            buscarAtletaSupervisor();
+            if (selectEvento) cargarEstadisticasSupervisor();
         } else {
             alert("Error: " + res.message);
         }

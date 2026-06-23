@@ -1,7 +1,7 @@
 <?php
 // ==========================================================================
 // SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/buscar.php (BUSCADOR EN TIEMPO REAL CON FILTRO DINÁMICO)
+// FILE: api/buscar.php (BUSCADOR EN TIEMPO REAL CON FILTRO DINÁMICO CORREGIDO)
 // AUTHOR: JOSÉ DAVID SOLÍS RANGEL
 // ==========================================================================
 
@@ -21,20 +21,40 @@ if (!isset($_SESSION['usuario_rol'])) {
 // Capturamos el término de búsqueda que viene por la URL (ej: ?termino=carlos)
 $termino = isset($_GET['termino']) ? trim($_GET['termino']) : '';
 
-// Captura inteligente del Evento ID:
-$evento_id = 0;
-if (isset($_GET['evento_id']) && $_GET['evento_id'] !== '' && $_GET['evento_id'] !== '0') {
-    // Caso Encargado (Select en vivo)
-    $evento_id = intval($_GET['evento_id']);
-} elseif (isset($_SESSION['evento_id_staff'])) {
-    // Caso Staff (Confirmado en su sesión al entrar)
-    $evento_id = intval($_SESSION['evento_id_staff']);
-} elseif (isset($_SESSION['evento_id_activo'])) {
-    // Caso Respaldo Encargado
+// 1. Intentamos obtener el evento_id que viene directamente por la URL (Caso Encargado)
+$evento_id = isset($_GET['evento_id']) ? intval($_GET['evento_id']) : 0;
+
+// 2. Si no viene por URL (Caso Staff), aplicamos la lógica inteligente y el control de expulsión
+if ($evento_id === 0) {
+    if (isset($_SESSION['evento_id_staff'])) {
+        // 🚨 CONTROL DE EXPULSIÓN REAL-TIME:
+        // Verificamos que su sesión coincida con el evento activo en la BD
+        $sql_check = "SELECT id FROM tbl_eventos WHERE id = ? AND es_activo = 1";
+        $stmt_check = sqlsrv_query($conn, $sql_check, array($_SESSION['evento_id_staff']));
+
+        if ($stmt_check === false || !sqlsrv_fetch_array($stmt_check, SQLSRV_FETCH_ASSOC)) {
+            unset($_SESSION['evento_id_staff']); // Rompemos la sesión de mesa
+            echo json_encode(['error' => 'evento_cambiado']); // Avisamos al JavaScript
+            exit;
+        }
+        // Si sigue activo, lo asignamos de forma definitiva
+        $evento_id = intval($_SESSION['evento_id_staff']);
+    } else {
+        // Fallback en vivo: Si el staff no ha confirmado pero busca, nos alineamos al evento activo en la BD
+        $sql_active = "SELECT id FROM tbl_eventos WHERE es_activo = 1";
+        $stmt_active = sqlsrv_query($conn, $sql_active);
+        if ($stmt_active !== false && $row_a = sqlsrv_fetch_array($stmt_active, SQLSRV_FETCH_ASSOC)) {
+            $evento_id = intval($row_a['id']);
+        }
+    }
+}
+
+// 3. Respaldo secundario si sigue siendo 0 (Caso de reingreso de Encargado sin parámetro de URL)
+if ($evento_id === 0 && isset($_SESSION['evento_id_activo'])) {
     $evento_id = intval($_SESSION['evento_id_activo']);
 }
 
-//Validacion de salida segura
+// 4. Validación estricta de salida segura
 if (empty($termino) || $evento_id === 0) {
     echo json_encode([]);
     exit;

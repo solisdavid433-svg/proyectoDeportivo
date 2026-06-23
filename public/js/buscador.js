@@ -1,3 +1,9 @@
+// ==========================================================================
+// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
+// FILE: public/js/buscador.js (BUSCADOR STAFF CON EXPULSIÓN EN TIEMPO REAL)
+// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
+// ==========================================================================
+
 document.addEventListener('DOMContentLoaded', () => {
     const inputBuscar = document.getElementById('search-input'); // Asegúrate que tu <input> de busqueda tenga este ID
     const contenedorResultados = document.getElementById('resultados-atletas'); // El contenedor <div> donde se pintarán las tarjetas
@@ -14,6 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch(`api/buscar.php?termino=${encodeURIComponent(valor)}`);
                 const atletas = await response.json();
+
+                // Si el encargado conmutó el evento, frenamos el renderizado y recargamos la mesa
+                if (atletas && atletas.error === 'evento_cambiado') {
+                    alert("⚠️ El Encargado ha cambiado la competencia activa. La mesa de entrega se reiniciará.");
+                    window.location.reload();
+                    return;
+                }
 
                 contenedorResultados.innerHTML = ''; // Limpiamos lo anterior
 

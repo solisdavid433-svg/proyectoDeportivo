@@ -1,22 +1,36 @@
 <?php
-session_start();
 
-/** @var resource $conn */
+session_start();
 
 // Bloque anti-caché: Obliga al navegador a consultar al servidor siempre
 header("Cache-Control: no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
-// Solo permitimos el acceso a los operadores de mesa (Staff)
+// Solo permitimos el acceso al Staff
 if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Staff') {
     header('Location: index.php');
     exit();
 }
 
+// Enlace relacional con tu base de datos
 require_once 'config/db.php';
 
-// 🎯 Si el Staff no ha confirmado qué evento va a cubrir hoy:
+// DETECTOR DE CAMBIO EN VIVO: Si el Staff ya confirmó una carrera, verificamos si sigue activa
+if (isset($_SESSION['evento_id_staff'])) {
+    $sql_check = "SELECT id FROM tbl_eventos WHERE id = ? AND es_activo = 1";
+    $stmt_check = sqlsrv_query($conn, $sql_check, array($_SESSION['evento_id_staff']));
+    $row_check = sqlsrv_fetch_array($stmt_check, SQLSRV_FETCH_ASSOC);
+
+    // Si el Encargado ya cambió la carrera en la BD, finalizamos esta mesa para forzar re-confirmación
+    if (!$row_check) {
+        unset($_SESSION['evento_id_staff']);
+        header("Location: staff.php");
+        exit();
+    }
+}
+
+// Si el Staff no ha confirmado qué evento va a cubrir hoy, interceptamos con la tarjeta:
 if (!isset($_SESSION['evento_id_staff'])) {
 ?>
     <!DOCTYPE html>
@@ -29,37 +43,44 @@ if (!isset($_SESSION['evento_id_staff'])) {
     </head>
 
     <body class="bg-light" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0;">
-        <div class="admin-card" style="max-width: 450px; text-align: center; padding: 2.5rem;">
+        <div class="admin-card" style="max-width: 450px; text-align: center; padding: 2.5rem; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
             <span style="font-size: 3rem;">🏃‍♂️</span>
             <h2 style="margin-top: 1rem; color: #1E3A8A;">Confirmación de Circuito</h2>
             <p class="section-desc">Verifique que esté ingresando a la competencia correcta para la entrega de kits de hoy.</p>
 
             <?php
-            // Cambiamos la consulta para que jale estrictamente el circuito asignado a su perfil de usuario
-            $sql_ev = "SELECT e.id, e.nombre_evento, e.disciplina 
-                    FROM tbl_usuarios u
-                    INNER JOIN tbl_eventos e ON u.evento_asignado_id = e.id
-                    WHERE u.id = " . intval($_SESSION['usuario_id']);
+            //ALINEACIÓN MAESTRA: Jalamos estrictamente el evento que el Encargado activó globalmente
+            $sql_ev = "SELECT id, nombre_evento, disciplina FROM tbl_eventos WHERE es_activo = 1";
             $stmt_ev = sqlsrv_query($conn, $sql_ev);
-            $row_ev = sqlsrv_fetch_array($stmt_ev, SQLSRV_FETCH_ASSOC);
 
-            if ($row_ev) {
-                $_SESSION['temp_evento_id'] = $row_ev['id']; // Guardamos temporalmente
-            ?>
-                <div style="background-color: #F0FDF4; border: 1px solid #BBF7D0; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
-                    <span style="font-size: 0.85rem; font-weight: 700; color: #16A34A; text-transform: uppercase; letter-spacing: 0.05em;">Circuito Detectado:</span>
-                    <h4 style="margin: 0.25rem 0; color: #14532D; font-size: 1.1rem;"><?php echo htmlspecialchars($row_ev['nombre_evento']); ?></h4>
-                    <small style="color: #166534;">Disciplina: <b><?php echo $row_ev['disciplina']; ?></b></small>
-                </div>
-
-                <form action="api/confirmar_evento_staff.php" method="POST">
-                    <button type="submit" style="width: 100%; background-color: #16A34A; color: white; border: none; padding: 0.85rem; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer;">
-                        ✔️ Confirmar y Abrir Mesa de Entrega
-                    </button>
-                </form>
-            <?php
+            if ($stmt_ev === false) {
+                echo "<p class='text-danger'>Error de comunicación con SQL Server 2014.</p>";
             } else {
-                echo "<p class='text-danger' style='margin: 1.5rem 0;'>⚠️ No hay ningún evento activo en el sistema. Avise al administrador.</p>";
+                $row_ev = sqlsrv_fetch_array($stmt_ev, SQLSRV_FETCH_ASSOC);
+
+                // Si el encargado ya activó una carrera en la base de datos:
+                if ($row_ev) {
+                    $_SESSION['temp_evento_id'] = $row_ev['id']; // Almacenamos el ID temporalmente
+            ?>
+                    <div style="background-color: #F0FDF4; border: 1px solid #BBF7D0; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
+                        <span style="font-size: 0.85rem; font-weight: 700; color: #16A34A; text-transform: uppercase; letter-spacing: 0.05em;">Circuito Detectado en Vivo:</span>
+                        <h4 style="margin: 0.25rem 0; color: #14532D; font-size: 1.1rem;"><?php echo htmlspecialchars($row_ev['nombre_evento']); ?></h4>
+                        <small style="color: #166534;">Disciplina: <b><?php echo htmlspecialchars($row_ev['disciplina']); ?></b></small>
+                    </div>
+
+                    <form action="api/confirmar_evento_staff.php" method="POST">
+                        <button type="submit" style="width: 100%; background-color: #16A34A; color: white; border: none; padding: 0.85rem; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer;">
+                            ✔️ Confirmar y Abrir Mesa de Entrega
+                        </button>
+                    </form>
+            <?php
+                } else {
+                    // 🛡️ SALVAGUARDA LOGÍSTICA: Si el encargado aún no elige nada en su panel
+                    echo "<div style='background-color: #FFFBEB; border: 1px solid #FDE68A; padding: 1.2rem; border-radius: 8px; margin: 1.5rem 0; text-align: left; color: #92400E;'>";
+                    echo "⚠️ <b>Mesa en Espera:</b> El Encargado aún no ha activado ninguna competencia el día de hoy. Por favor, espere un momento a que se aperture el circuito desde el monitor de supervisión.";
+                    echo "</div>";
+                    echo "<button onclick='window.location.reload()' style='width: 100%; background-color: #64748B; color: white; border: none; padding: 0.75rem; border-radius: 6px; font-weight: 600; cursor: pointer;'>🔄 Volver a verificar</button>";
+                }
             }
             ?>
         </div>
@@ -67,9 +88,22 @@ if (!isset($_SESSION['evento_id_staff'])) {
 
     </html>
 <?php
-    exit(); // Detenemos el renderizado del buscador hasta que confirme
+    exit(); // Frena por completo el renderizado del buscador hasta que exista un evento activo y confirmado
+}
+
+//JALAMOS EL NOMBRE PARA EL NAVBAR:
+$nombre_evento_actual = "Mesa de Validación";
+$sql_name = "SELECT nombre_evento FROM tbl_eventos WHERE id = ?";
+$stmt_name = sqlsrv_query($conn, $sql_name, array($_SESSION['evento_id_staff']));
+if ($stmt_name && $row_name = sqlsrv_fetch_array($stmt_name, SQLSRV_FETCH_ASSOC)) {
+    $nombre_evento_actual = $row_name['nombre_evento'];
 }
 ?>
+
+<div class="navbar-brand">
+    <img src="public/img/logo.png" alt="Proyecto Deportivo" class="nav-logo">
+    <span class="event-title-active"><?php echo htmlspecialchars($nombre_evento_actual); ?> - Entrega de Kits</span>
+</div>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -86,7 +120,7 @@ if (!isset($_SESSION['evento_id_staff'])) {
     <header class="navbar sticky-navbar">
         <div class="navbar-brand">
             <img src="public/img/logo.png" alt="Proyecto Deportivo" class="nav-logo">
-            <span class="event-title-active">Morelia 10K - Entrega de Kits</span>
+            <span class="event-title-active"><?php echo htmlspecialchars($nombre_evento_actual); ?> - Entrega de Kits</span>
         </div>
         <div class="navbar-user">
             <span class="user-badge"><?php echo $_SESSION['usuario_nombre']; ?></span>
