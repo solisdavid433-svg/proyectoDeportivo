@@ -7,6 +7,7 @@
     <title>Iniciar Sesión - Proyecto Deportivo</title>
     <!-- Ruta adaptada a la nueva infraestructura local -->
     <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="icon" href="public/img/logo.png" type="image/png">
 </head>
 
 <body class="login-body">

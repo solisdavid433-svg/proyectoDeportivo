@@ -24,6 +24,7 @@ require_once 'config/db.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Supervisión (Encargado) - Proyecto Deportivo</title>
     <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="icon" href="public/img/logo.png" type="image/png">
 </head>
 
 <body class="bg-light">

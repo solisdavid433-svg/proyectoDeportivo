@@ -13,6 +13,8 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administra
 }
 // Capturamos el ID del evento que se está consultando
 $evento_id = isset($_GET['id']) ? intval($_GET['id']) : 1;
+
+require_once 'config/db.php';
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +25,7 @@ $evento_id = isset($_GET['id']) ? intval($_GET['id']) : 1;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estadísticas del Evento - Proyecto Deportivo</title>
     <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="icon" href="public/img/logo.png" type="image/png">
 </head>
 
 <body class="bg-light">
@@ -126,20 +129,61 @@ $evento_id = isset($_GET['id']) ? intval($_GET['id']) : 1;
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="admin-card">
-                <h2>Distribución Logística por Mesas</h2>
-                <p class="section-desc">Monitoreo del volumen total de kits validados por estación de atención.</p>
-                <div class="staff-ranking-box">
-                    <h3>Rendimiento de Mesas en Vivo</h3>
-                    <div id="lista-rendimiento-staff">
-                        <!-- Aquí JavaScript pintará las filas dinámicamente -->
+        <!-- ==========================================================================
+     FILA DE CONTROL INFERIOR: RENDIMIENTO STAFF Y CONTROL DE COMPETIDORES
+     ========================================================================== -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; align-items: start; width: 100%; box-sizing: border-box;">
+            <!--TARJETA IZQUIERDA: MONITOREO Y BÚSQUEDA DE COMPETIDORES EN ESTE EVENTO -->
+            <div class="admin-card" style="margin: 0; min-height: 380px; display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem; flex-wrap: wrap;">
+                    <div>
+                        <h3>Localizador de Competidores</h3>
+                        <p class="section-desc">Consulte el estatus de entrega y datos de atletas en esta competencia.</p>
                     </div>
+                    <!-- Campo de Texto integrado estéticamente -->
+                    <div style="position: relative; min-width: 220px;">
+                        <input type="text" id="search-admin-atleta-evento" placeholder="🔍 Buscar folio o nombre..."
+                            style="padding: 0.55rem 0.8rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.85rem; width: 100%; box-sizing: border-box; outline: none; transition: border 0.2s;">
+                    </div>
+                </div>
+
+                <!-- Tabla de visualización rápida con Scroll de Seguridad -->
+                <div class="table-responsive" style="margin-top: 1.2rem; max-height: 260px; overflow-y: auto; flex-grow: 1;">
+                    <table class="admin-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Folio</th>
+                                <th>Nombre del Competidor</th>
+                                <th>Categoría</th>
+                                <th>Estatus</th>
+                            </tr>
+                        </thead>
+                        <!-- El contenedor dinámico que poblará el dashboard.js -->
+                        <tbody id="tabla-admin-competidores-body">
+                            <tr>
+                                <td colspan="4" class="text-center text-muted" style="padding: 2rem;">
+                                    Escriba el nombre o folio en el buscador superior para consultar el estatus.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-        </section>
+            <!-- TARJETA DERECHA: RENDIMIENTO DE STAFF (TU DISEÑO ACTUAL) -->
+            <div class="admin-card" style="margin: 0; min-height: 380px;">
+                <h3>Distribución Logística por Mesas</h3>
+                <p class="section-desc">Monitoreo del volumen total de kits validados por estación de atención.</p>
 
+                <h4 style="margin-top: 1.5rem; color: #0F172A;">Rendimiento de Mesas en Vivo</h4>
+                <!-- El contenedor dinámico de tu dashboard.js -->
+                <div id="lista-rendimiento-staff" style="margin-top: 1rem;">
+                    <!-- Carga dinámica asíncrona -->
+                </div>
+            </div>
+        </div>
     </main>
     <script src="public/js/dashboard.js?v=1.2"></script>
 </body>

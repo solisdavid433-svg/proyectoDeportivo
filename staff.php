@@ -40,6 +40,7 @@ if (!isset($_SESSION['evento_id_staff'])) {
         <meta charset="UTF-8">
         <title>Confirmar Competencia - Staff</title>
         <link rel="stylesheet" href="public/css/styles.css">
+        <link rel="icon" href="public/img/logo.png" type="image/png">
     </head>
 
     <body class="bg-light" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0;">
@@ -99,11 +100,6 @@ if ($stmt_name && $row_name = sqlsrv_fetch_array($stmt_name, SQLSRV_FETCH_ASSOC)
     $nombre_evento_actual = $row_name['nombre_evento'];
 }
 ?>
-
-<div class="navbar-brand">
-    <img src="public/img/logo.png" alt="Proyecto Deportivo" class="nav-logo">
-    <span class="event-title-active"><?php echo htmlspecialchars($nombre_evento_actual); ?> - Entrega de Kits</span>
-</div>
 
 <!DOCTYPE html>
 <html lang="es">
