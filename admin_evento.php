@@ -17,6 +17,22 @@ $evento_id = isset($_GET['id']) ? intval($_GET['id']) : 1;
 require_once 'config/db.php';
 ?>
 
+<?php
+// 🎯 CAPTURA CORRECTA: Leemos '?id=X' de la URL de admin_evento.php
+$evento_id_visualizando = isset($_GET['id']) ? intval($_GET['id']) : 1;
+
+// Nombre de respaldo por si ocurre algún fallo
+$nombre_evento_cabecera = "Módulo Analítico";
+
+// Consultamos el nombre real del circuito en SQL Server
+$sql_header_name = "SELECT nombre_evento FROM tbl_eventos WHERE id = ?";
+$stmt_header_name = sqlsrv_query($conn, $sql_header_name, array($evento_id_visualizando));
+
+if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_FETCH_ASSOC)) {
+    $nombre_evento_cabecera = $row_hn['nombre_evento'];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -49,11 +65,28 @@ require_once 'config/db.php';
         <section class="event-dashboard-header">
             <div>
                 <button onclick="window.location.href='admin.php'" class="btn-back">← Volver a Competencias</button>
-                <h1 class="event-title">Carrera Atlética Morelia 10K 2026</h1>
+                <h1 class="event-title"><?php echo htmlspecialchars($nombre_evento_cabecera); ?></h1>
                 <p class="event-subtitle">Control analítico y estatus en tiempo real de la entrega de paquetes.</p>
             </div>
-            <div class="refresh-indicator">
-                <span class="status-dot pulse"></span> Monitoreo en vivo activo
+
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
+
+                <a href="api/exportar_competidores.php?id=<?php echo $evento_id_visualizando; ?>"
+                    target="_blank"
+                    class="btn"
+                    style="background-color: #10B981; color: white; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; font-weight: 700; border-radius: 6px; text-decoration: none; font-size: 0.85rem; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2); transition: background-color 0.2s; border: none; cursor: pointer;">
+                    📊 Exportar Lista Excel
+                </a>
+
+                <!-- 🎯 NUEVO BOTÓN 2: LA PLANTILLA COMPATIBLE CON EL SEÑOR CARLOS -->
+                <a href="api/exportar_cronometraje.php?id=<?php echo $evento_id_visualizando; ?>" target="_blank" class="btn" style="background-color: #475569; color: white; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; font-weight: 700; border-radius: 6px; text-decoration: none; font-size: 0.85rem; box-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.2);">
+                    ⏱️ Descargar Plantilla Cronometraje
+                </a>
+
+                <div class="refresh-indicator" style="margin: 0;">
+                    <span class="status-dot pulse"></span> Monitoreo en vivo activo
+                </div>
+
             </div>
         </section>
 
@@ -142,14 +175,14 @@ require_once 'config/db.php';
                         <h3>Localizador de Competidores</h3>
                         <p class="section-desc">Consulte el estatus de entrega y datos de atletas en esta competencia.</p>
                     </div>
-                    <!-- Campo de Texto integrado estéticamente -->
+
                     <div style="position: relative; min-width: 220px;">
                         <input type="text" id="search-admin-atleta-evento" placeholder="🔍 Buscar folio o nombre..."
-                            style="padding: 0.55rem 0.8rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.85rem; width: 100%; box-sizing: border-box; outline: none; transition: border 0.2s;">
+                            style="padding: 0.55rem 0.8rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.85rem; width: 100%; box-sizing: border-box; outline: none;">
                     </div>
                 </div>
 
-                <!-- Tabla de visualización rápida con Scroll de Seguridad -->
+
                 <div class="table-responsive" style="margin-top: 1.2rem; max-height: 260px; overflow-y: auto; flex-grow: 1;">
                     <table class="admin-table" style="width: 100%;">
                         <thead>
@@ -158,17 +191,51 @@ require_once 'config/db.php';
                                 <th>Nombre del Competidor</th>
                                 <th>Categoría</th>
                                 <th>Estatus</th>
+                                <th>Acción</th>
                             </tr>
                         </thead>
-                        <!-- El contenedor dinámico que poblará el dashboard.js -->
+
                         <tbody id="tabla-admin-competidores-body">
                             <tr>
-                                <td colspan="4" class="text-center text-muted" style="padding: 2rem;">
+                                <td colspan="5" class="text-center text-muted" style="padding: 2rem;">
                                     Escriba el nombre o folio en el buscador superior para consultar el estatus.
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!--modal de edición de competidor -->
+
+            <div id="modal-admin-competidor" class="modal" style="display: none;">
+                <div class="modal-content" style="max-width: 460px; box-sizing: border-box;">
+                    <span class="close-modal" onclick="cerrarModalAdminCompetidor()">&times;</span>
+                    <h2 style="color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-top: 0;">🏃‍♂️ Corregir Datos de Atleta</h2>
+                    <p class="section-desc" style="margin-bottom: 1.5rem;">Modifique errores de inscripción o reasigne categorías para el kit.</p>
+
+                    <form id="form-admin-competidor" onsubmit="guardarCambioCompetidor(event)" style="text-align: left; display: grid; gap: 1.25rem;">
+                        <div class="form-group">
+                            <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Número de Folio (Chip):</label>
+                            <input type="text" id="lbl_comp_folio" readonly style="width: 100%; padding: 0.65rem; border: 1px solid #E2E8F0; background-color: #F8FAFC; border-radius: 6px; box-sizing: border-box; font-weight: bold; color: #1E40AF;">
+                            <input type="hidden" id="comp_folio" name="comp_folio">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Nombre Completo del Atleta:</label>
+                            <input type="text" id="comp_nombre" name="comp_nombre" required style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box; font-weight: 600;">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Categoría de Circuito:</label>
+                            <input type="text" id="comp_categoria" name="comp_categoria" required style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box; text-transform: uppercase;">
+                        </div>
+
+                        <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%; margin-top: 0.5rem;">
+                            <button type="button" onclick="cerrarModalAdminCompetidor()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
+                            <button type="submit" id="btn-submit-atleta-admin" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">💾 Actualizar Atleta</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

@@ -523,8 +523,8 @@ require_once 'config/db.php';
                     </div>
                 </div>
                 <div style="background-color: #FFFBEB; border: 2px dashed #F59E0B; padding: 1.25rem; border-radius: 0.5rem; text-align: center; box-sizing: border-box;">
-                    <label for="file_csv" style="display: block; font-weight: 700; margin-bottom: 0.5rem; color: #B45309; font-size: 0.95rem;">Adjuntar Lista (.csv):</label>
-                    <input type="file" id="file_csv" name="file_csv" accept=".csv" required style="width: 100%; padding: 0.4rem; background: white; border: 1px solid #FDE68A; border-radius: 6px; font-size: 0.85rem; box-sizing: border-box;">
+                    <label style="font-weight: bold; color: #B45309;">Adjuntar Lista (.xlsx):</label>
+                    <input type="file" id="archivo_corredores" name="archivo_corredores" accept=".xlsx" required>
                 </div>
                 <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%;">
                     <button type="button" class="btn" onclick="cerrarModalNuevoEvento()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
