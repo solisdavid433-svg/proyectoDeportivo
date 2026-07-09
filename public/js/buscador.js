@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
         inputBuscar.addEventListener('input', async (e) => {
             const valor = e.target.value.trim();
 
-            if (valor.length < 2) {
-                contenedorResultados.innerHTML = '<p class="text-center text-muted">Escriba al menos 2 caracteres para buscar...</p>';
+            if (valor.length < 1) {
+                contenedorResultados.innerHTML = '<p class="text-center text-muted">Escriba al menos 1 caracter para buscar...</p>';
                 return;
             }
 

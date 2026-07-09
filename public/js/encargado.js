@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             //SOLUCIÓN: Ahora inputBuscar ya existe y no romperá el script
-            if (inputBuscar && inputBuscar.value.trim().length >= 2) {
+            if (inputBuscar && inputBuscar.value.trim().length >= 1) {
                 buscarAtletaSupervisor();
             }
         });
@@ -114,7 +114,7 @@ window.cargarEstadisticasSupervisor = async function () {
         }
 
 
-        if (inputBuscar && inputBuscar.value.trim().length >= 2) {
+        if (inputBuscar && inputBuscar.value.trim().length >= 1) {
             buscarAtletaSupervisor();
         }
 
@@ -133,7 +133,7 @@ window.buscarAtletaSupervisor = async function () {
 
     const valor = inputBuscar.value.trim();
 
-    if (valor.length < 2) {
+    if (valor.length < 1) {
         contenedor.innerHTML = '<p class="text-center text-muted" style="grid-column: 1/-1;">Escriba los datos del atleta arriba para abrir las herramientas de edición.</p>';
         return;
     }

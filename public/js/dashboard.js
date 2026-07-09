@@ -25,7 +25,7 @@ async function ejecutarBusquedaAdmin(valor) {
     const tbody = document.getElementById('tabla-admin-competidores-body');
     if (!tbody) return;
 
-    if (valor.length < 2) {
+    if (valor.length < 1) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="5" class="text-center text-muted" style="padding: 2rem;">

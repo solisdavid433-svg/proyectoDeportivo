@@ -1,7 +1,7 @@
 <?php
 // ==========================================================================
 // SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/buscar.php (BUSCADOR EN TIEMPO REAL CON FILTRO DINÁMICO CORREGIDO)
+// FILE: api/buscar.php (BUSCADOR ADAPTADO A LLAVE COMPUESTA Y TEXTO CORTO)
 // AUTHOR: JOSÉ DAVID SOLÍS RANGEL
 // ==========================================================================
 
@@ -18,7 +18,7 @@ if (!isset($_SESSION['usuario_rol'])) {
     exit;
 }
 
-// Capturamos el término de búsqueda que viene por la URL (ej: ?termino=carlos)
+// Capturamos el término de búsqueda que viene por la URL (ej: ?termino=8)
 $termino = isset($_GET['termino']) ? trim($_GET['termino']) : '';
 
 // 1. Intentamos obtener el evento_id que viene directamente por la URL (Caso Encargado)
@@ -28,7 +28,6 @@ $evento_id = isset($_GET['evento_id']) ? intval($_GET['evento_id']) : 0;
 if ($evento_id === 0) {
     if (isset($_SESSION['evento_id_staff'])) {
         // 🚨 CONTROL DE EXPULSIÓN REAL-TIME:
-        // Verificamos que su sesión coincida con el evento activo en la BD
         $sql_check = "SELECT id FROM tbl_eventos WHERE id = ? AND es_activo = 1";
         $stmt_check = sqlsrv_query($conn, $sql_check, array($_SESSION['evento_id_staff']));
 
@@ -37,10 +36,8 @@ if ($evento_id === 0) {
             echo json_encode(['error' => 'evento_cambiado']); // Avisamos al JavaScript
             exit;
         }
-        // Si sigue activo, lo asignamos de forma definitiva
         $evento_id = intval($_SESSION['evento_id_staff']);
     } else {
-        // Fallback en vivo: Si el staff no ha confirmado pero busca, nos alineamos al evento activo en la BD
         $sql_active = "SELECT id FROM tbl_eventos WHERE es_activo = 1";
         $stmt_active = sqlsrv_query($conn, $sql_active);
         if ($stmt_active !== false && $row_a = sqlsrv_fetch_array($stmt_active, SQLSRV_FETCH_ASSOC)) {
@@ -49,31 +46,30 @@ if ($evento_id === 0) {
     }
 }
 
-// 3. Respaldo secundario si sigue siendo 0 (Caso de reingreso de Encargado sin parámetro de URL)
+// 3. Respaldo secundario si sigue siendo 0
 if ($evento_id === 0 && isset($_SESSION['evento_id_activo'])) {
     $evento_id = intval($_SESSION['evento_id_activo']);
 }
 
 // 4. Validación estricta de salida segura
-if (empty($termino) || $evento_id === 0) {
+if ($termino === '' || $evento_id === 0) {
     echo json_encode([]);
     exit;
 }
 
-// Consulta con LEFT JOIN para saber en tiempo real si el kit sufrió un cambio posterior
+// 🎯 COBERTURA DE LOGÍSTICA: 
+// 1. Agregamos el doble amarre en el ON (c.evento_id = e.evento_id) para que no se crucen las entregas.
+// 2. Usamos CAST en c.folio para buscar coincidencias parciales del número escrito.
 $sql = "SELECT c.folio, c.nombre AS nombre, c.categoria, c.estatus_entrega, e.hubo_cambio
         FROM tbl_competidores c
-        LEFT JOIN tbl_entregas_kits e ON c.folio = e.competidor_id
-        WHERE (c.folio = ? OR c.nombre COLLATE Modern_Spanish_CI_AI LIKE ?) AND c.evento_id = ?
+        LEFT JOIN tbl_entregas_kits e ON c.folio = e.competidor_id AND c.evento_id = e.evento_id
+        WHERE (CAST(c.folio AS VARCHAR) LIKE ? OR c.nombre COLLATE Modern_Spanish_CI_AI LIKE ?) AND c.evento_id = ?
         ORDER BY c.nombre ASC";
 
-// Agregamos los comodines '%' para que busque en cualquier parte del nombre
-$buscarNombre = "%" . $termino . "%";
+// Preparamos el comodín para la búsqueda predictiva parcial
+$buscarComodin = "%" . $termino . "%";
 
-// El primer parámetro intenta evaluar si es un número (folio), si no, mandamos un valor neutro
-$buscarFolio = is_numeric($termino) ? intval($termino) : -1;
-
-$params = array($buscarFolio, $buscarNombre, $evento_id);
+$params = array($buscarComodin, $buscarComodin, $evento_id);
 $stmt = sqlsrv_query($conn, $sql, $params);
 
 if ($stmt === false) {
