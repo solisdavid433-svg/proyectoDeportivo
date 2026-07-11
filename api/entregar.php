@@ -33,6 +33,26 @@ if ($folio === 0 || empty($firma) || empty($talla) || $evento_id === 0) {
     exit;
 }
 
+// ==========================================================================
+// 🚨 EL ESCUDO: VALIDACIÓN ANTIDUPLICADOS REAL-TIME
+// ==========================================================================
+// Consultamos si este folio ya tiene un registro de kit guardado en esta carrera
+$sqlCheck = "SELECT COUNT(*) AS total FROM tbl_entregas_kits WHERE competidor_id = ? AND evento_id = ?";
+$stmtCheck = sqlsrv_query($conn, $sqlCheck, array($folio, $evento_id));
+
+if ($stmtCheck !== false) {
+    $rowCheck = sqlsrv_fetch_array($stmtCheck, SQLSRV_FETCH_ASSOC);
+    if (intval($rowCheck['total']) > 0) {
+        // Si el conteo es mayor a 0, congelamos la inserción y mandamos la alerta
+        echo json_encode([
+            'success' => false,
+            'message' => '⚠️ OPERACIÓN RECHAZADA: Este competidor ya recogió su kit anteriormente.'
+        ]);
+        exit;
+    }
+}
+
+// PROCESO ATÓMICO DE GUARDADO (SI PASÓ EL FILTRO PREVIO)
 // Iniciamos una transacción atómica para garantizar la integridad relacional de ambas tablas
 sqlsrv_begin_transaction($conn);
 
