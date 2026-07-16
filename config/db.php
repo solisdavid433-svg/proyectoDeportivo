@@ -28,5 +28,12 @@ if (!$conn) {
     die(); // Detiene la ejecución del sistema por seguridad
 }
 
-// Nota: Si el archivo no arroja errores, la variable $conn queda disponible 
-// para realizar consultas SELECT, INSERT y UPDATE en tus APIs.
+// Si el usuario tiene una sesión activa, actualizamos su "latido" en la base de datos
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['usuario_id'])) {
+    $sql_heartbeat = "UPDATE tbl_usuarios SET ultima_actividad = GETDATE() WHERE id = ?";
+    sqlsrv_query($conn, $sql_heartbeat, array($_SESSION['usuario_id']));
+}
