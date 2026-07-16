@@ -101,13 +101,21 @@ window.cargarEstadisticasSupervisor = async function () {
                 return;
             }
 
+            //ACTIVO-AUSENTE    
             s.forEach((staff, index) => {
                 const tr = document.createElement('tr');
+
+                //CAPTURA INTELIGENTE: Leemos el estatus del servidor (por defecto 'Ausente' si no viene)
+                const estatusReal = staff.estatus_operativo || 'Ausente';
+
+                //CONTROL DE ESTILOS: Si está activo usa tu clase 'online' (verde), si no, usa 'offline' (gris/rojo)
+                const claseColor = (estatusReal === 'Activo') ? 'online' : 'offline';
+
                 tr.innerHTML = `
                     <td><span class="table-badge-mesa">Mesa ${index + 1}</span></td>
                     <td><strong>${staff.operador}</strong></td>
                     <td class="text-center text-bold text-blue">${staff.total_entregas} kits</td>
-                    <td><span class="badge-status online">● Activo</span></td>
+                    <td><span class="badge-status ${claseColor}">● ${estatusReal}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -148,7 +156,7 @@ window.buscarAtletaSupervisor = async function () {
         contenedor.innerHTML = '';
 
         if (atletas.length === 0) {
-            contenedor.innerHTML = '<p class="text-center text-danger" style="grid-column: 1/-1;">❌ No se encontraron competidores.</p>';
+            contenedor.innerHTML = '<p class="text-center text-danger" style="grid-column: 1/-1;">No se encontraron competidores.</p>';
             return;
         }
 
@@ -176,12 +184,48 @@ window.buscarAtletaSupervisor = async function () {
 }
 
 // --- LOGICA DE MODAL DE INCIDENCIAS ---
-window.abrirModalCategoria = (folio, categoriaActual) => {
+window.abrirModalCategoria = async (folio, categoriaActual) => {
     folioAtletaSeleccionado = folio;
     document.getElementById('txt-folio-sup').innerText = folio;
-    document.getElementById('select-categoria-sup').value = categoriaActual;
+
+    const selectEvento = document.getElementById('select-evento-activo');
+    const eventoId = selectEvento ? selectEvento.value : 0;
+    const selectCat = document.getElementById('select-categoria-sup');
+
+    if (selectCat) {
+        selectCat.innerHTML = '<option value="">Cargando categorías...</option>';
+
+        try {
+            // Jalamos el catálogo único de categorías del evento activo
+            const response = await fetch(`api/obtener_categorias.php?evento_id=${eventoId}`);
+            const data = await response.json();
+
+            if (data.success) {
+                selectCat.innerHTML = ''; // Limpiamos el mensaje de carga
+
+                data.categorias.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat;
+                    opt.textContent = cat;
+
+                    // Si coincide con la categoría que ya tiene el corredor, la dejamos seleccionada
+                    if (cat === categoriaActual) {
+                        opt.selected = true;
+                    }
+                    selectCat.appendChild(opt);
+                });
+            }
+        } catch (error) {
+            console.error("Error cargando el catálogo de categorías dinámicas:", error);
+            // Respaldo en caso de error de red: dejamos la opción actual del atleta
+            selectCat.innerHTML = `<option value="${categoriaActual}" selected>${categoriaActual}</option>`;
+        }
+    }
+
+    // Desplegamos el modal visualmente
     document.getElementById('modal-supervisor').style.display = 'flex';
 };
+
 
 window.cerrarModalSupervisor = () => {
     document.getElementById('modal-supervisor').style.display = 'none';

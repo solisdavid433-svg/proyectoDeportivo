@@ -156,11 +156,9 @@ require_once 'config/db.php';
                 <label for="select-categoria-sup" style="font-weight: 700; display: block; margin-bottom: 0.5rem; color: #1E293B;">
                     Nueva Categoría del Competidor:
                 </label>
+                <!--Dejamos el select vacío; JavaScript se encargará de inyectar las opciones reales -->
                 <select id="select-categoria-sup" style="width: 100%; padding: 0.8rem; border: 2px solid #CBD5E1; border-radius: 0.5rem; background-color: white; font-family: inherit; font-size: 1rem;">
-                    <option value="Libre Varonil">Libre Varonil</option>
-                    <option value="Libre Femenil">Libre Femenil</option>
-                    <option value="Master Femenil">Master Femenil</option>
-                    <option value="Juvenil B">Juvenil B</option>
+                    <option value="">Cargando categorías...</option>
                 </select>
             </div>
 

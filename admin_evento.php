@@ -228,7 +228,10 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
 
                         <div class="form-group">
                             <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Categoría de Circuito:</label>
-                            <input type="text" id="comp_categoria" name="comp_categoria" required style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box; text-transform: uppercase;">
+                            <select id="comp_categoria" name="comp_categoria" required style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box; background-color: white;">
+                                <!-- JS cargará las opciones dinámicas aquí -->
+                                <option value="">Cargando categorías...</option>
+                            </select>
                         </div>
 
                         <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%; margin-top: 0.5rem;">
@@ -239,7 +242,7 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
                 </div>
             </div>
 
-            <!-- TARJETA DERECHA: RENDIMIENTO DE STAFF (TU DISEÑO ACTUAL) -->
+            <!-- TARJETA DERECHA: RENDIMIENTO DE STAFF -->
             <div class="admin-card" style="margin: 0; min-height: 380px;">
                 <h3>Distribución Logística por Mesas</h3>
                 <p class="section-desc">Monitoreo del volumen total de kits validados por estación de atención.</p>

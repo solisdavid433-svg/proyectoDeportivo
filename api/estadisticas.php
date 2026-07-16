@@ -85,12 +85,19 @@ $tallas = [
 // --------------------------------------------------------------------------
 // METRICA 3: PRODUCTIVIDAD DEL STAFF EN ESTE EVENTO
 // --------------------------------------------------------------------------
-$sqlStaff = "SELECT u.nombre as operador, COUNT(e.competidor_id) as total_entregas
+$sqlStaff = "SELECT u.nombre as operador, 
+                    COUNT(e.competidor_id) as total_entregas,
+                    --CALCULO DE LATIDO EN TIEMPO REAL
+                    CASE 
+                        WHEN u.ultima_actividad >= DATEADD(minute, -3, GETDATE()) THEN 'Activo'
+                        ELSE 'Ausente'
+                    END as estatus_operativo
              FROM tbl_usuarios u
              INNER JOIN tbl_entregas_kits e ON u.id = e.staff_id
              WHERE e.evento_id = ?
-             GROUP BY u.nombre
+             GROUP BY u.nombre, u.ultima_actividad --Obligatorio incluir ultima_actividad aquí
              ORDER BY total_entregas DESC";
+
 $qStaff = sqlsrv_query($conn, $sqlStaff, array($evento_id));
 
 $rankingStaff = [];
@@ -98,7 +105,7 @@ while ($row = sqlsrv_fetch_array($qStaff, SQLSRV_FETCH_ASSOC)) {
     $rankingStaff[] = $row;
 }
 
-// RESPUESTA LIMPIA EN FORMATO JSON
+// RESPUESTA LIMPIA EN FORMATO JSON (Se mantiene exactamente igual)
 echo json_encode([
     'success' => true,
     'resumen' => [

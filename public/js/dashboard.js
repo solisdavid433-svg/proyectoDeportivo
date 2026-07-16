@@ -82,14 +82,52 @@ async function ejecutarBusquedaAdmin(valor) {
 // ==========================================================================
 const modalAtletaAdmin = document.getElementById('modal-admin-competidor');
 
-window.abrirModalEditarCompetidor = (folio, nombre, categoria) => {
+// TRANSFORMA LA FUNCIÓN A ASÍNCRONA (async)
+window.abrirModalEditarCompetidor = async (folio, nombre, categoria) => {
     document.getElementById('form-admin-competidor').reset();
 
-    // Auto-poblamos los campos con los datos de la fila
+    // Auto-poblamos los campos de texto con los datos de la fila
     document.getElementById('lbl_comp_folio').value = `#${folio}`;
     document.getElementById('comp_folio').value = folio;
     document.getElementById('comp_nombre').value = nombre;
-    document.getElementById('comp_categoria').value = categoria;
+
+    //SOLUCIÓN: Jalamos el ID real desde el input oculto de admin_evento.php
+    const hdnEvento = document.getElementById('hdn-evento-id');
+    const eventoId = hdnEvento ? parseInt(hdnEvento.value) : 0;
+
+    const selectCat = document.getElementById('comp_categoria');
+
+    if (selectCat) {
+        selectCat.innerHTML = '<option value="">Cargando categorías...</option>';
+
+        try {
+            // Consultamos la API enviando el ID correcto del evento
+            const response = await fetch(`api/obtener_categorias.php?evento_id=${eventoId}`);
+            const data = await response.json();
+
+            if (data.success && data.categorias.length > 0) {
+                selectCat.innerHTML = ''; // Limpiamos el mensaje de carga
+
+                data.categorias.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat;
+                    opt.textContent = cat;
+
+                    // Si coincide con la categoría actual del atleta, la pre-seleccionamos
+                    if (cat === categoria) {
+                        opt.selected = true;
+                    }
+                    selectCat.appendChild(opt);
+                });
+            } else {
+                // Modo respaldo: Si no hay categorías, dejamos la que ya tiene el atleta
+                selectCat.innerHTML = `<option value="${categoria}" selected>${categoria}</option>`;
+            }
+        } catch (err) {
+            console.error("Error crítico en la petición FETCH del Admin:", err);
+            selectCat.innerHTML = `<option value="${categoria}" selected>${categoria}</option>`;
+        }
+    }
 
     if (modalAtletaAdmin) modalAtletaAdmin.style.display = 'flex';
 };
@@ -98,41 +136,10 @@ window.cerrarModalAdminCompetidor = () => {
     if (modalAtletaAdmin) modalAtletaAdmin.style.display = 'none';
 };
 
-window.guardarCambioCompetidor = async (event) => {
-    event.preventDefault();
-    const btn = document.getElementById('btn-submit-atleta-admin');
-    btn.disabled = true; btn.innerText = "⏳ Actualizando padrón...";
 
-    try {
-        const response = await fetch('api/modificar_competidor.php', {
-            method: 'POST',
-            body: new FormData(document.getElementById('form-admin-competidor'))
-        });
-        const res = await response.json();
-
-        if (res.success) {
-            cerrarModalAdminCompetidor();
-
-            // 🚀 REFRESCADO INTELIGENTE: Forzamos al buscador a lanzar la consulta con el texto actual
-            const txtBuscar = document.getElementById('search-admin-atleta-evento')?.value || '';
-            ejecutarBusquedaAdmin(txtBuscar);
-
-            // Recargamos métricas por si cambió el inventario textil o barra de avance
-            cargarEstadisticas();
-        } else {
-            alert("❌ Error de consistencia: " + res.message);
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Error de red al intentar conectar con modificar_competidor.php");
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "💾 Actualizar Atleta";
-    }
-};
 
 // ==========================================================================
-// RECOLECTOR DE ANALÍTICAS ORIGINAL (CONSERVADO INTACTO 👍)
+// RECOLECTOR DE ANALÍTICAS ORIGINAL (CONSERVADO INTACTO)
 // ==========================================================================
 async function cargarEstadisticas() {
     try {
