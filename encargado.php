@@ -164,7 +164,7 @@ require_once 'config/db.php';
 
             <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%;">
                 <button type="button" onclick="cerrarModalSupervisor()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.6rem 2rem; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">Cancelar</button>
-                <button type="button" onclick="guardarCambioCategoria()" style="background-color: #D97706; color: white; border: none; padding: 0.6rem 2rem; border-radius: 0.5rem; font-weight: 700; cursor: pointer;">Guardar Modificación</button>
+                <button type="button" onclick="guardarCambioCategoria()" style="background-color: #1E40AF; color: white; border: none; padding: 0.6rem 2rem; border-radius: 0.5rem; font-weight: 700; cursor: pointer;">Guardar Modificación</button>
             </div>
         </div>
     </div>

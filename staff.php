@@ -187,7 +187,7 @@ if ($stmt_name && $row_name = sqlsrv_fetch_array($stmt_name, SQLSRV_FETCH_ASSOC)
                 </label>
                 <select id="modal-talla-select" class="form-select" required style="width: 100%; padding: 0.8rem; border: 2px solid var(--border-color); border-radius: 0.5rem;">
                     <option value="">-- Seleccione una talla entregada --</option>
-                    <option value="XS">Chica (XS)</option>
+                    <option value="XS"> Extra Chica (XS)</option>
                     <option value="CH">Chica (CH)</option>
                     <option value="M">Mediana (M)</option>
                     <option value="G">Grande (G)</option>

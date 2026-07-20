@@ -207,7 +207,7 @@ require_once 'config/db.php';
 
                     <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%; margin-top: 0.5rem;">
                         <button type="button" onclick="cerrarModalEncargado()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
-                        <button type="submit" id="btn-submit-encargado" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">Guardar Supervisor</button>
+                        <button type="submit" id="btn-submit-encargado" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">Guardar Encargado</button>
                     </div>
                 </form>
             </div>
@@ -231,7 +231,7 @@ require_once 'config/db.php';
                 document.getElementById('enc_nombre').value = nombre;
                 document.getElementById('enc_correo').value = correo;
 
-                document.getElementById('enc-modal-titulo').innerText = "Modificar Perfil Supervisor";
+                document.getElementById('enc-modal-titulo').innerText = "Modificar Perfil Encargado";
                 document.getElementById('enc_password').placeholder = "Dejar en blanco para conservar";
                 document.getElementById('enc_password').required = false;
                 if (modalEncargado) modalEncargado.style.display = 'flex';
@@ -258,7 +258,7 @@ require_once 'config/db.php';
                     } else {
                         alert("Error: " + res.message);
                         btn.disabled = false;
-                        btn.innerText = "Guardar Supervisor";
+                        btn.innerText = "Guardar Encargado";
                     }
                 } catch (error) {
                     console.error(error);
@@ -268,7 +268,7 @@ require_once 'config/db.php';
             }
 
             window.eliminarEncargado = async (id, nombre) => {
-                const seguro = confirm(`¿Desea dar de baja la cuenta del Supervisor: "${nombre}"?\nYa no tendrá acceso al Monitor General.`);
+                const seguro = confirm(`¿Desea dar de baja la cuenta del Encargado: "${nombre}"?\nYa no tendrá acceso al Monitor General.`);
                 if (!seguro) return;
 
                 try {
@@ -302,7 +302,7 @@ require_once 'config/db.php';
                         <p class="section-desc">Administre las credenciales de los operadores de mesa y asígnelos al circuito correspondiente.</p>
                     </div>
                     <button class="btn btn-secondary btn-sm" onclick="abrirModalNuevoStaff()" style="background-color: #1E40AF; color: white; padding: 0.6rem 1.2rem; font-weight: 700; border-radius: 6px; border: none; cursor: pointer;">
-                        + Registrar Operador
+                        + Registrar staff
                     </button>
                 </div>
 
@@ -367,7 +367,7 @@ require_once 'config/db.php';
     <div id="modal-staff" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 480px; box-sizing: border-box;">
             <span class="close-modal" onclick="cerrarModalStaff()">&times;</span>
-            <h2 id="staff-modal-titulo" style="color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-top: 0;">👤 Registrar Operador</h2>
+            <h2 id="staff-modal-titulo" style="color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-top: 0;">👤 Registrar Staff</h2>
             <p class="section-desc" style="margin-bottom: 1.5rem;">Gestione el perfil del personal en campo y defina su mesa operativa.</p>
 
             <form id="form-staff" onsubmit="guardarStaff(event)" style="text-align: left; display: grid; gap: 1.25rem;">
@@ -408,7 +408,7 @@ require_once 'config/db.php';
 
                 <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%; margin-top: 0.5rem;">
                     <button type="button" onclick="cerrarModalStaff()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
-                    <button type="submit" id="btn-submit-staff" style="background-color: #059669; color: white; border: none; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">💾 Guardar Personal</button>
+                    <button type="submit" id="btn-submit-staff" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">Guardar Personal</button>
                 </div>
             </form>
         </div>
@@ -420,7 +420,7 @@ require_once 'config/db.php';
         window.abrirModalNuevoStaff = () => {
             document.getElementById('form-staff').reset();
             document.getElementById('staff_id').value = "0";
-            document.getElementById('staff-modal-titulo').innerText = "👤 Registrar Operador";
+            document.getElementById('staff-modal-titulo').innerText = "Registrar staff";
             document.getElementById('staff_password').placeholder = "Escriba la clave...";
             document.getElementById('staff_password').required = true;
             if (modalStaff) modalStaff.style.display = 'flex';
@@ -501,7 +501,7 @@ require_once 'config/db.php';
         <div class="modal-content" style="max-width: 520px; box-sizing: border-box;">
             <span class="close-modal" onclick="cerrarModalNuevoEvento()">&times;</span>
             <h2 style="color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-top: 0;">🏆 Registrar Competencia</h2>
-            <p class="section-desc" style="margin-bottom: 1.5rem;">Ingrese los parámetros del circuito y cargue su padrón para darlo de alta.</p>
+            <p class="section-desc" style="margin-bottom: 1.5rem;">Ingrese los parámetros del circuito y cargue su lista para darlo de alta.</p>
 
             <form id="form-unificado-evento" onsubmit="guardarEventoYPadron(event)" enctype="multipart/form-data" style="text-align: left; display: grid; gap: 1.25rem;">
                 <div class="form-group">
@@ -528,7 +528,7 @@ require_once 'config/db.php';
                 </div>
                 <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%;">
                     <button type="button" class="btn" onclick="cerrarModalNuevoEvento()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
-                    <button type="submit" id="btn-submit-unificado" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">🚀 Guardar e Importar Padrón</button>
+                    <button type="submit" id="btn-submit-unificado" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">Guardar e Importar lista</button>
                 </div>
             </form>
             <div id="resultado-unificado-box" style="display: none; margin-top: 1.25rem; padding: 1rem; border-radius: 6px; font-weight: 600; text-align: left; font-size: 0.9rem;"></div>
@@ -597,7 +597,7 @@ require_once 'config/db.php';
 
                 <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%; margin-top: 0.5rem;">
                     <button type="button" onclick="cerrarModalEditar()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
-                    <button type="submit" id="btn-submit-editar" style="background-color: #D97706; color: white; border: none; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">💾 Aplicar Cambios</button>
+                    <button type="submit" id="btn-submit-editar" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 2rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">Aplicar Cambios</button>
                 </div>
             </form>
         </div>
@@ -668,7 +668,7 @@ require_once 'config/db.php';
 
         // --- MANEJO DE ELIMINACIÓN ---
         window.eliminarEvento = async (id, nombre) => {
-            const seguro = confirm(`¿ESTÁS ABSOLUTAMENTE SEGURO DE ELIMINAR EL EVENTO: "${nombre}"?\n\nEsta acción borrará de forma PERMANENTE la competencia, todos los competidores del padrón y las firmas de los kits entregados.`);
+            const seguro = confirm(`¿ESTÁS ABSOLUTAMENTE SEGURO DE ELIMINAR EL EVENTO: "${nombre}"?\n\nEsta acción borrará de forma PERMANENTE la competencia, todos los competidores y las firmas de los kits entregados.`);
             if (!seguro) return;
 
             try {
@@ -725,7 +725,7 @@ require_once 'config/db.php';
                     resultadoBox.style.border = "1px solid #FCA5A5";
                     resultadoBox.innerHTML = `<b>Error en la transacción:</b> ${res.message}`;
                     btnSubmit.disabled = false;
-                    btnSubmit.innerText = " Guardar e Importar Padrón";
+                    btnSubmit.innerText = " Guardar e Importar lista";
                 }
             } catch (error) {
                 console.error(error);

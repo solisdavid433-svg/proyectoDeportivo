@@ -78,7 +78,7 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
                     📊 Exportar Lista Excel
                 </a>
 
-                <!-- 🎯 NUEVO BOTÓN 2: LA PLANTILLA COMPATIBLE CON EL SEÑOR CARLOS -->
+                <!-- NUEVO BOTÓN 2: LA PLANTILLA COMPATIBLE CON EL SEÑOR CARLOS -->
                 <a href="api/exportar_cronometraje.php?id=<?php echo $evento_id_visualizando; ?>" target="_blank" class="btn" style="background-color: #475569; color: white; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; font-weight: 700; border-radius: 6px; text-decoration: none; font-size: 0.85rem; box-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.2);">
                     ⏱️ Descargar Plantilla Cronometraje
                 </a>

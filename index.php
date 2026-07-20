@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Proyecto Deportivo</title>
-    <!-- Ruta adaptada a la nueva infraestructura local -->
+
     <link rel="stylesheet" href="public/css/styles.css">
     <link rel="icon" href="public/img/logo.png" type="image/png">
 </head>
@@ -15,7 +15,7 @@
     <div class="login-container">
         <!-- Encabezado con Identidad Corporativa -->
         <div class="login-logo-wrapper">
-            <!-- Recuerda colocar tu imagen en public/img/logo.png -->
+
             <img src="public/img/logo.png" alt="Logo Proyecto Deportivo" class="main-logo">
         </div>
 
