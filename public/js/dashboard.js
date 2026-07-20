@@ -203,3 +203,90 @@ async function cargarEstadisticas() {
         console.error("Error crítico en la comunicación del Dashboard:", error);
     }
 }
+
+// ==========================================================================
+// GESTIÓN DE ALTAS MANUALES DE COMPETIDORES
+// ==========================================================================
+const modalNuevoCompetidor = document.getElementById('modal-nuevo-competidor');
+
+window.abrirModalNuevoCompetidor = async () => {
+    document.getElementById('form-nuevo-competidor').reset();
+
+    const hdnEvento = document.getElementById('hdn-evento-id');
+    const eventoId = hdnEvento ? parseInt(hdnEvento.value) : 0;
+    const selectCat = document.getElementById('nuevo_comp_categoria');
+
+    if (selectCat) {
+        selectCat.innerHTML = '<option value="">Cargando categorías...</option>';
+        try {
+            // Carga dinámicamente las categorías reales que tiene este evento
+            const response = await fetch(`api/obtener_categorias.php?evento_id=${eventoId}`);
+            const data = await response.json();
+
+            if (data.success && data.categorias.length > 0) {
+                selectCat.innerHTML = '<option value="">-- Seleccione Categoría --</option>';
+                data.categorias.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat;
+                    opt.textContent = cat;
+                    selectCat.appendChild(opt);
+                });
+            } else {
+                selectCat.innerHTML = '<option value="">Sin categorías previas</option>';
+            }
+        } catch (err) {
+            console.error("Error al obtener categorías para nuevo competidor:", err);
+        }
+    }
+
+    if (modalNuevoCompetidor) modalNuevoCompetidor.style.display = 'flex';
+};
+
+window.cerrarModalNuevoCompetidor = () => {
+    if (modalNuevoCompetidor) modalNuevoCompetidor.style.display = 'none';
+};
+
+window.guardarNuevoCompetidor = async (event) => {
+    event.preventDefault();
+    const btn = document.getElementById('btn-submit-nuevo-atleta');
+    const hdnEvento = document.getElementById('hdn-evento-id');
+    const eventoId = hdnEvento ? parseInt(hdnEvento.value) : 0;
+
+    btn.disabled = true;
+    btn.innerText = "Registrando...";
+
+    const formData = new FormData(document.getElementById('form-nuevo-competidor'));
+    formData.append('evento_id', eventoId); // Inyectamos el ID de la carrera activa
+
+    try {
+        const response = await fetch('api/agregar_competidor.php', {
+            method: 'POST',
+            body: formData
+        });
+        const res = await response.json();
+
+        if (res.success) {
+            alert("✅ " + res.message);
+            cerrarModalNuevoCompetidor();
+
+            // Refrescamos métricas para que "Total Inscritos" suba de inmediato
+            if (typeof cargarEstadisticas === 'function') cargarEstadisticas();
+
+            // Ejecutamos una búsqueda automática con el folio creado para verificarlo
+            const folioCreado = document.getElementById('nuevo_comp_folio').value;
+            const inputBuscar = document.getElementById('search-admin-atleta-evento');
+            if (inputBuscar) {
+                inputBuscar.value = folioCreado;
+                if (typeof ejecutarBusquedaAdmin === 'function') ejecutarBusquedaAdmin(folioCreado);
+            }
+        } else {
+            alert("⚠️ " + res.message);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error de conexión al intentar agregar al competidor.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Dar de Alta";
+    }
+};

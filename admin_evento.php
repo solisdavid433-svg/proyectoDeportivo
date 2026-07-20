@@ -176,9 +176,14 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
                         <p class="section-desc">Consulte el estatus de entrega y datos de atletas en esta competencia.</p>
                     </div>
 
-                    <div style="position: relative; min-width: 220px;">
+                    <div style="display: flex; gap: 0.5rem; align-items: center; min-width: 320px;">
                         <input type="text" id="search-admin-atleta-evento" placeholder="🔍 Buscar folio o nombre..."
                             style="padding: 0.55rem 0.8rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.85rem; width: 100%; box-sizing: border-box; outline: none;">
+
+                        <button type="button" onclick="abrirModalNuevoCompetidor()" class="btn"
+                            style="background-color: #1E40AF; color: white; border: none; padding: 0.55rem 0.9rem; border-radius: 6px; font-weight: 700; font-size: 0.85rem; white-space: nowrap; cursor: pointer; box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);">
+                            Nuevo Atleta
+                        </button>
                     </div>
                 </div>
 
@@ -237,6 +242,42 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
                         <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%; margin-top: 0.5rem;">
                             <button type="button" onclick="cerrarModalAdminCompetidor()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
                             <button type="submit" id="btn-submit-atleta-admin" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">💾 Actualizar Atleta</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ==========================================================================
+     MODAL: REGISTRAR NUEVO COMPETIDOR EXTEMPORÁNEO
+     ========================================================================== -->
+            <div id="modal-nuevo-competidor" class="modal" style="display: none;">
+                <div class="modal-content" style="max-width: 460px; box-sizing: border-box;">
+                    <span class="close-modal" onclick="cerrarModalNuevoCompetidor()">&times;</span>
+                    <h2 style="color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-top: 0;"> Registrar Nuevo Atleta</h2>
+                    <p class="section-desc" style="margin-bottom: 1.5rem;">Alta manual para inscripciones de último minuto en este evento.</p>
+
+                    <form id="form-nuevo-competidor" onsubmit="guardarNuevoCompetidor(event)" style="text-align: left; display: grid; gap: 1.25rem;">
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Número de Folio / Chip Asignado:</label>
+                            <input type="number" id="nuevo_comp_folio" name="folio" required min="1" placeholder="Ej. 501" style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box; font-weight: bold; color: #1E40AF;">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Nombre Completo del Atleta:</label>
+                            <input type="text" id="nuevo_comp_nombre" name="nombre" required placeholder="Nombre y Apellidos" style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box; font-weight: 600; " text-transform: uppercase; oninput="this.value = this.value.toUpperCase();">
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 700; display: block; margin-bottom: 0.4rem; color: #334155;">Categoría del Evento:</label>
+                            <select id="nuevo_comp_categoria" name="categoria" required style="width: 100%; padding: 0.65rem; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box; background-color: white;">
+                                <option value="">Cargando categorías...</option>
+                            </select>
+                        </div>
+
+                        <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%; margin-top: 0.5rem;">
+                            <button type="button" onclick="cerrarModalNuevoCompetidor()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
+                            <button type="submit" id="btn-submit-nuevo-atleta" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">Dar de Alta</button>
                         </div>
                     </form>
                 </div>
