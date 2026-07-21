@@ -216,7 +216,7 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
             <div id="modal-admin-competidor" class="modal" style="display: none;">
                 <div class="modal-content" style="max-width: 460px; box-sizing: border-box;">
                     <span class="close-modal" onclick="cerrarModalAdminCompetidor()">&times;</span>
-                    <h2 style="color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-top: 0;">🏃‍♂️ Corregir Datos de Atleta</h2>
+                    <h2 style="color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-top: 0;">Corregir Datos de Atleta</h2>
                     <p class="section-desc" style="margin-bottom: 1.5rem;">Modifique errores de inscripción o reasigne categorías para el kit.</p>
 
                     <form id="form-admin-competidor" onsubmit="guardarCambioCompetidor(event)" style="text-align: left; display: grid; gap: 1.25rem;">
@@ -241,7 +241,7 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
 
                         <div class="modal-actions" style="display: flex; gap: 1rem; justify-content: center; width: 100%; margin-top: 0.5rem;">
                             <button type="button" onclick="cerrarModalAdminCompetidor()" style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 0.65rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancelar</button>
-                            <button type="submit" id="btn-submit-atleta-admin" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">💾 Actualizar Atleta</button>
+                            <button type="submit" id="btn-submit-atleta-admin" style="background-color: #1E40AF; color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 6px; font-weight: 700; cursor: pointer; flex-grow: 1;">Actualizar Atleta</button>
                         </div>
                     </form>
                 </div>

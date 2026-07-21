@@ -204,6 +204,69 @@ async function cargarEstadisticas() {
     }
 }
 
+//GUARDAR CAMBIO DE COMPETIDOR
+window.guardarCambioCompetidor = async (event) => {
+    //DETENEMOS LA RECARGA DE PÁGINA INMEDIATAMENTE
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const btn = document.getElementById('btn-submit-atleta-admin');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = "Actualizando lista...";
+    }
+
+    try {
+        // Capturamos el ID del evento activo desde el input oculto de admin_evento.php
+        const hdnEvento = document.getElementById('hdn-evento-id');
+        const eventoId = hdnEvento ? parseInt(hdnEvento.value) : 0;
+
+        // Preparamos el FormData del formulario
+        const formElement = document.getElementById('form-admin-competidor');
+        const formData = new FormData(formElement);
+
+        formData.append('evento_id', eventoId);
+
+        const response = await fetch('api/modificar_competidor.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const res = await response.json();
+
+        if (res.success) {
+            alert("Competidor actualizado con éxito.");
+            cerrarModalAdminCompetidor();
+
+            // Refrescamos la búsqueda del buscador de la tabla
+            const inputBuscar = document.getElementById('search-admin-atleta-evento');
+            const txtBuscar = inputBuscar ? inputBuscar.value.trim() : '';
+
+            if (typeof ejecutarBusquedaAdmin === 'function') {
+                ejecutarBusquedaAdmin(txtBuscar);
+            }
+
+            // Recargamos métricas si existe la función en dashboard.js
+            if (typeof cargarEstadisticas === 'function') {
+                cargarEstadisticas();
+            }
+        } else {
+            alert("Error de consistencia: " + (res.message || "No se pudo actualizar"));
+        }
+
+    } catch (err) {
+        console.error("Error crítico al modificar competidor:", err);
+        alert("Error de red o respuesta no válida del servidor.");
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = "Actualizar Atleta";
+        }
+    }
+};
+
 // ==========================================================================
 // GESTIÓN DE ALTAS MANUALES DE COMPETIDORES
 // ==========================================================================
