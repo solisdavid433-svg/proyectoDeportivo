@@ -95,7 +95,7 @@ $sqlStaff = "SELECT u.nombre as operador,
              FROM tbl_usuarios u
              INNER JOIN tbl_entregas_kits e ON u.id = e.staff_id
              WHERE e.evento_id = ?
-             GROUP BY u.nombre, u.ultima_actividad --Obligatorio incluir ultima_actividad aquí
+             GROUP BY u.nombre, u.ultima_actividad
              ORDER BY total_entregas DESC";
 
 $qStaff = sqlsrv_query($conn, $sqlStaff, array($evento_id));
