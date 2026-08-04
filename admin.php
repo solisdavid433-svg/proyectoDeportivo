@@ -179,7 +179,7 @@ require_once 'config/db.php';
             </section>
         </div>
 
-
+        <!-- MODAL ENCARGADO -->
         <div id="modal-encargado" class="modal" style="display: none;">
             <div class="modal-content" style="max-width: 480px; box-sizing: border-box;">
                 <span class="close-modal" onclick="cerrarModalEncargado()">&times;</span>
@@ -319,7 +319,7 @@ require_once 'config/db.php';
                         </thead>
                         <tbody>
                             <?php
-                            //CONSULTA CORREGIDA: Apunta a u.correo de acuerdo a tu esquema
+                            // Apunta a u.correo para mostrar el correo de acceso del Staff en la tabla
                             $sql_staff = "SELECT u.id, u.nombre, u.correo, u.evento_asignado_id, e.nombre_evento 
                                             FROM tbl_usuarios u
                                             LEFT JOIN tbl_eventos e ON u.evento_asignado_id = e.id
@@ -364,6 +364,8 @@ require_once 'config/db.php';
         </div>
 
     </main>
+
+    <!-- MODAL DE STAFF -->
     <div id="modal-staff" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 480px; box-sizing: border-box;">
             <span class="close-modal" onclick="cerrarModalStaff()">&times;</span>
@@ -497,6 +499,7 @@ require_once 'config/db.php';
     </script>
     </main>
 
+    <!-- MODAL REGISTRAR EVENTO -->
     <div id="modal-registro-evento" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 520px; box-sizing: border-box;">
             <span class="close-modal" onclick="cerrarModalNuevoEvento()">&times;</span>
@@ -535,6 +538,7 @@ require_once 'config/db.php';
         </div>
     </div>
 
+    <!-- MODAL EDITAR EVENTO -->
     <div id="modal-editar-evento" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 540px; box-sizing: border-box;">
             <span class="close-modal" onclick="cerrarModalEditar()">&times;</span>

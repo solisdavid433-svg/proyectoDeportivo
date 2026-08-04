@@ -1,9 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/cambiar_categoria.php (AUDITORÍA Y CAMBIO SEGMENTADO)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// AUDITORÍA Y CAMBIO SEGMENTADO POR EVENTO DE CATEGORÍA DE COMPETIDOR)
 
 session_start();
 
@@ -12,7 +8,7 @@ session_start();
 header('Content-Type: application/json');
 require_once '../config/db.php';
 
-// Candado estricto: Solo el Encargado (o el Administrador) puede ejecutar esto
+// Solo el Encargado (o el Administrador) puede ejecutar esto
 if (!isset($_SESSION['usuario_rol']) || ($_SESSION['usuario_rol'] !== 'Encargado' && $_SESSION['usuario_rol'] !== 'Administrador')) {
     echo json_encode(['success' => false, 'message' => 'Acceso denegado. Privilegios insuficientes.']);
     exit;
@@ -22,7 +18,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 $folio = isset($input['folio']) ? intval($input['folio']) : 0;
 $nueva_cat = isset($input['nueva_categoria']) ? trim($input['nueva_categoria']) : '';
 
-// PREVENCIÓN CRÍTICA: Capturamos el ID del evento enviado por el JSON payload
+// Capturamos el ID del evento enviado por el JSON payload
 $evento_id = isset($input['evento_id']) ? intval($input['evento_id']) : 0;
 $encargado_id = $_SESSION['usuario_id']; // ID del supervisor logueado
 

@@ -1,9 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/crear_evento.php (PRODUCCIÓN - ADAPTADO AL ESQUEMA REAL)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+//PRODUCCIÓN - ADAPTADO AL ESQUEMA REAL DE COLUMNAS DE LA BASE DE DATOS)
 
 session_start();
 
@@ -27,12 +23,11 @@ if (!isset($_FILES['archivo_corredores']) || $_FILES['archivo_corredores']['erro
     exit;
 }
 
-// ==========================================================================
 // PASO A: REGISTRAR EL NUEVO EVENTO ADAPTADO A TU ESQUEMA DE COLUMNAS
-// ==========================================================================
+
 sqlsrv_begin_transaction($conn); // Iniciamos el escudo protector (Transacción)
 
-// 🎯 INGENIERÍA AJUSTADA: Insertamos todas las columnas obligatorias 'No NULL' detectadas
+// Insertamos todas las columnas obligatorias 'No NULL' detectadas
 $sql_evento = "INSERT INTO tbl_eventos 
                (nombre_evento, fecha, disciplina, stock_xs, stock_ch, stock_m, stock_g, stock_xg, stock_2xl, es_activo) 
                OUTPUT INSERTED.id 
@@ -61,9 +56,8 @@ sqlsrv_fetch($stmt_evento);
 $nuevo_evento_id = sqlsrv_get_field($stmt_evento, 0);
 
 
-// ==========================================================================
 // PASO B: PROCESAR EL ARCHIVO EXCEL (.XLSX) NATIVO EN MEMORIA
-// ==========================================================================
+
 $rutaTemporal = $_FILES['archivo_corredores']['tmp_name'];
 $zip = new ZipArchive;
 
@@ -116,11 +110,11 @@ if ($zip->open($rutaTemporal) === TRUE) {
             }
         }
 
-        // Mapeo dinámico de las columnas del archivo del señor Carlos
+        // Mapeo dinámico de las columnas del archivo
         $letraFolio     = array_search('Ficha', $encabezados);
         $letraCategoria = array_search('CategoryName', $encabezados);
 
-        // BUSCADOR INTELIGENTE DE NOMBRE: Busca la columna bajo cualquiera de sus dos variantes conocidas
+        // Busca la columna bajo cualquiera de sus dos variantes conocidas
         $letraNombre    = array_search('Participant', $encabezados);
         if ($letraNombre === false) {
             $letraNombre = array_search('ParticipantName', $encabezados); // Variante del archivo anterior

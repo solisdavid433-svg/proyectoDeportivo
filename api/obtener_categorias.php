@@ -1,9 +1,6 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/obtener_categorias.php (CATÁLOGO DINÁMICO DE CATEGORÍAS POR EVENTO)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+
+// CATÁLOGO DINÁMICO DE CATEGORÍAS POR EVENTO
 
 session_start();
 

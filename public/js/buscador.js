@@ -1,11 +1,7 @@
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: public/js/buscador.js (BUSCADOR STAFF CON EXPULSIÓN EN TIEMPO REAL)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// BUSCADOR STAFF CON EXPULSIÓN EN TIEMPO REAL
 
 document.addEventListener('DOMContentLoaded', () => {
-    const inputBuscar = document.getElementById('search-input'); // Asegúrate que tu <input> de busqueda tenga este ID
+    const inputBuscar = document.getElementById('search-input'); // El input de búsqueda en staff.php
     const contenedorResultados = document.getElementById('resultados-atletas'); // El contenedor <div> donde se pintarán las tarjetas
 
     if (inputBuscar && contenedorResultados) {
@@ -31,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 contenedorResultados.innerHTML = ''; // Limpiamos lo anterior
 
                 if (atletas.length === 0) {
-                    contenedorResultados.innerHTML = '<p class="text-center text-danger">❌ No se encontró ningún competidor.</p>';
+                    contenedorResultados.innerHTML = '<p class="text-center text-danger">No se encontró ningún competidor.</p>';
                     return;
                 }
 
@@ -44,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const funcionClick = esPendiente ? `abrirFirma(${atleta.folio})` : `verDetalles(${atleta.folio})`;
                     const textoBoton = esPendiente ? 'Entregar Kit' : 'Ver Detalles';
 
-                    // LOGICA DE CAMBIO DE COLOR: Si está entregado pero tiene el flag de cambio activo
+                    //  Si está entregado pero tiene el flag de cambio activo
                     let textoBadge = atleta.estatus_entrega;
                     let claseBadge = atleta.estatus_entrega.toLowerCase();
 

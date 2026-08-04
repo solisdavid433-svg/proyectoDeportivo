@@ -1,9 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/detalles.php (EXTRACCIÓN DE AUDITORÍA CON INNER JOIN)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// EXTRACCIÓN DE AUDITORÍA CON INNER JOIN
 
 session_start();
 

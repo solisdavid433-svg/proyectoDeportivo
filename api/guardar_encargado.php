@@ -1,10 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/guardar_encargado.php (CRUD DE SUPERVISORES DE CONTROL)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
-
+// CRUD DE SUPERVISORES DE CONTROL DE KITS DEPORTIVOS
 session_start();
 
 /** @var resource $conn */
@@ -28,7 +23,7 @@ if (empty($nombre) || empty($correo)) {
 }
 
 if ($id === 0) {
-    // 🆕 OPERACIÓN: REGISTRO DE NUEVO ENCARGADO
+    // REGISTRO DE NUEVO ENCARGADO
     if (empty($password)) {
         echo json_encode(['success' => false, 'message' => 'La contraseña es obligatoria para cuentas nuevas.']);
         exit;
@@ -40,7 +35,7 @@ if ($id === 0) {
     $sql = "INSERT INTO tbl_usuarios (nombre, correo, password, rol, estatus) VALUES (?, ?, ?, 'Encargado', 1)";
     $params = array($nombre, $correo, $password_encriptada);
 } else {
-    // 📝 OPERACIÓN: EDICIÓN DE PERFIL EXISTENTE
+    // EDICIÓN DE PERFIL EXISTENTE
     if (!empty($password)) {
         $password_encriptada = password_hash($password, PASSWORD_BCRYPT);
         $sql = "UPDATE tbl_usuarios SET nombre = ?, correo = ?, password = ? WHERE id = ? AND rol = 'Encargado'";

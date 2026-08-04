@@ -1,9 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/buscar.php (BUSCADOR ADAPTADO A LLAVE COMPUESTA Y TEXTO CORTO)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// BUSCADOR ADAPTADO A LLAVE COMPUESTA Y TEXTO CORTO
 
 session_start();
 
@@ -18,7 +14,7 @@ if (!isset($_SESSION['usuario_rol'])) {
     exit;
 }
 
-// Capturamos el término de búsqueda que viene por la URL (ej: ?termino=8)
+// Capturamos el término de búsqueda que viene por la URL
 $termino = isset($_GET['termino']) ? trim($_GET['termino']) : '';
 
 // 1. Intentamos obtener el evento_id que viene directamente por la URL (Caso Encargado)
@@ -27,7 +23,7 @@ $evento_id = isset($_GET['evento_id']) ? intval($_GET['evento_id']) : 0;
 // 2. Si no viene por URL (Caso Staff), aplicamos la lógica inteligente y el control de expulsión
 if ($evento_id === 0) {
     if (isset($_SESSION['evento_id_staff'])) {
-        // 🚨 CONTROL DE EXPULSIÓN REAL-TIME:
+        // CONTROL DE EXPULSIÓN REAL-TIME:
         $sql_check = "SELECT id FROM tbl_eventos WHERE id = ? AND es_activo = 1";
         $stmt_check = sqlsrv_query($conn, $sql_check, array($_SESSION['evento_id_staff']));
 
@@ -57,7 +53,7 @@ if ($termino === '' || $evento_id === 0) {
     exit;
 }
 
-// 🎯 COBERTURA DE LOGÍSTICA: 
+// COBERTURA DE LOGÍSTICA: 
 // 1. Agregamos el doble amarre en el ON (c.evento_id = e.evento_id) para que no se crucen las entregas.
 // 2. Usamos CAST en c.folio para buscar coincidencias parciales del número escrito.
 $sql = "SELECT c.folio, c.nombre AS nombre, c.categoria, c.estatus_entrega, e.hubo_cambio

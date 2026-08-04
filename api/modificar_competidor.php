@@ -1,9 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/modificar_competidor.php
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// MODIFICAR COMPETIDOR
 
 session_start();
 

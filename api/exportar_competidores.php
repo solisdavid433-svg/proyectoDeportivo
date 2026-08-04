@@ -1,17 +1,12 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/exportar_competidores.php (PRODUCCIÓN - AUDITORÍA COMPLETA)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
-
+// PRODUCCIÓN - AUDITORÍA COMPLETA DE KITS DEPORTIVOS)
 session_start();
 
 /** @var resource $conn */
 
 require_once '../config/db.php';
 
-// Candado estricto: Solo el Administrador puede descargar bases de datos completas
+// Solo el Administrador puede descargar bases de datos completas
 if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administrador') {
     die("Acceso denegado. No tiene permisos de auditoría.");
 }
@@ -31,7 +26,7 @@ if ($stmt_ev && $row_ev = sqlsrv_fetch_array($stmt_ev, SQLSRV_FETCH_ASSOC)) {
     $nombre_evento = preg_replace('/[^A-Za-z0-9_\-]/', '_', $row_ev['nombre_evento']);
 }
 
-// 2. FORZADO DE DESCARGA: Configuramos las cabeceras HTTP para descargar el archivo Excel (.xls)
+// 2. Configuramos las cabeceras HTTP para descargar el archivo Excel (.xls)
 header('Content-Type: application/vnd.ms-excel; charset=utf-8');
 header('Content-Disposition: attachment; filename="Auditoria_Kits_' . $nombre_evento . '_' . date('Ymd_His') . '.xls"');
 header('Pragma: no-cache');

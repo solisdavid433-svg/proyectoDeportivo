@@ -1,8 +1,4 @@
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: public/js/qr.js (MANEJADOR DE CAMARA Y LECTOR QR ASÍNCRONO)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// MANEJADOR DE CAMARA Y LECTOR QR ASÍNCRONO
 
 let html5Qrcode = null;
 let qrEscaneando = false;
@@ -20,7 +16,7 @@ async function toggleQRScanner() {
     // SI ESTÁ APAGADO, ENCENDEMOS LA CÁMARA
     contenedor.style.display = 'block';
     boton.innerText = "Cerrar Cámara";
-    boton.style.backgroundColor = "#DC2626"; // Cambia a rojo dinámicamente
+    boton.style.backgroundColor = "#DC2626"; // Cambia a rojo para indicar que se puede cerrar
 
     html5Qrcode = new Html5Qrcode("qr-reader");
     qrEscaneando = true;
@@ -45,7 +41,7 @@ async function toggleQRScanner() {
     }
 }
 
-// GANCHO DE ÉXITO: Qué pasa cuando la cámara detecta un QR válido
+// Cuando la cámara detecta un QR válido
 function onQrCodeSuccess(decodedText, decodedResult) {
     // Sanamos el texto por si el QR trae espacios o texto extra
     const folioDetectado = decodedText.trim();
@@ -62,7 +58,7 @@ function onQrCodeSuccess(decodedText, decodedResult) {
             // 3. Forzamos de forma artificial el evento 'input' para que buscador.js actúe
             inputBuscar.dispatchEvent(new Event('input'));
 
-            // 4. UX PREMIUM: Damos una milésima de segundo para que pinte la tarjeta y abrimos el modal de firma
+            // 4. Damos una milésima de segundo para que pinte la tarjeta y abrimos el modal de firma
             setTimeout(() => {
                 if (typeof window.abrirFirma === 'function') {
                     window.abrirFirma(folioDetectado);
@@ -72,9 +68,10 @@ function onQrCodeSuccess(decodedText, decodedResult) {
     }
 }
 
-// GANCHO DE ERROR CONTINUO: Silenciamos los fallos de cuadros vacíos para no saturar la consola
+// Silenciamos los fallos de cuadros vacíos para no saturar la consola
 function onQrCodeError(errorMessage) {
-    // Es normal que falle si pasa un cuadro de video sin un código QR enfrente
+    // No hacemos nada, solo ignoramos los errores de lectura
+    // console.warn(`QR Scan Error: ${errorMessage}`);
 }
 
 function apagarCamara() {

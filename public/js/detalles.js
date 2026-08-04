@@ -1,8 +1,4 @@
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: public/js/detalles.js (CONTROLADOR DE VISTA DE HISTORIAL DE ENTREGA)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// CONTROLADOR DE VISTA DE HISTORIAL DE ENTREGA
 
 const modalDetalles = document.getElementById('modal-detalles');
 
@@ -32,7 +28,7 @@ window.verDetalles = async (folio) => {
         }
     } catch (error) {
         console.error(error);
-        alert("❌ Error al recuperar los detalles de la entrega.");
+        alert("Error al recuperar los detalles de la entrega.");
     }
 };
 
@@ -46,7 +42,7 @@ window.mostrarSeccionCambio = () => {
     document.getElementById('btn-activar-cambio').style.display = 'none';
 };
 
-// Asegúrate de resetear la vista al cerrar el modal
+// Sobrescribimos la función cerrarDetalles para que también oculte la sección de cambio de talla y vuelva a mostrar el botón
 const funcionCerrarOriginal = window.cerrarDetalles;
 window.cerrarDetalles = () => {
     document.getElementById('seccion-cambio-talla').style.display = 'none';
@@ -77,10 +73,10 @@ window.procesarCambioTalla = async () => {
             // Refrescamos el buscador de inmediato para ver el nuevo badge de "CAMBIO"
             document.getElementById('search-input').dispatchEvent(new Event('input'));
         } else {
-            alert("❌ Error: " + res.message);
+            alert("Error: " + res.message);
         }
     } catch (error) {
         console.error(error);
-        alert("❌ Error de comunicación con el servidor.");
+        alert("Error de comunicación con el servidor.");
     }
 };

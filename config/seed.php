@@ -1,10 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: config/seed.php (CREACIÓN DE USUARIOS DE PRUEBA)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
-
+// CREACIÓN DE USUARIOS DE PRUEBA 
 // Incluimos la conexión que acabamos de probar con éxito
 require_once 'db.php';
 

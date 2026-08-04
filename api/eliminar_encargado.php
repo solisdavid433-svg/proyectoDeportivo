@@ -19,7 +19,7 @@ if ($enc_id === 0) {
     exit;
 }
 
-// Candado estricto: Solo elimina si el rol es Encargado para evitar accidentes
+// Solo elimina si el rol es Encargado para evitar accidentes
 $sql = "DELETE FROM tbl_usuarios WHERE id = ? AND rol = 'Encargado'";
 $stmt = sqlsrv_query($conn, $sql, array($enc_id));
 

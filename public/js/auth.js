@@ -1,8 +1,4 @@
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: public/js/auth.js (MANEJADOR INTERACTIVO DE LOGIN VIA FETCH API)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// MANEJADOR INTERACTIVO DE LOGIN VIA FETCH API
 
 document.addEventListener('DOMContentLoaded', () => {
     const formLogin = document.getElementById('form-login');
@@ -36,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (data.success) {
-                    // ¡Login correcto! Redirigimos al módulo correspondiente
+                    // Login correcto, Redirigimos al módulo correspondiente
                     window.location.href = data.redirect;
                 } else {
                     // Si la BD rebota las credenciales, mostramos el motivo real
@@ -47,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error('Error en la petición Fetch:', error);
-                alert('❌ Error de comunicación con el servidor. Verifique XAMPP.');
+                alert('Error de comunicación con el servidor. Verifique XAMPP.');
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = 'Ingresar al Sistema';
             }

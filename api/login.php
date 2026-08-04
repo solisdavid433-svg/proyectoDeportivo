@@ -1,16 +1,9 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/login.php (PROCESADOR ASÍNCRONO DE AUTENTICACIÓN)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
-
+// PROCESADOR ASÍNCRONO DE AUTENTICACIÓN DE USUARIOS)
 // Inicializamos el sistema de sesiones de PHP para recordar quién se logueó
 session_start();
 
-
 /** @var resource $conn */
-
 
 // Cabecera para indicarle al navegador que responderemos con formato JSON
 header('Content-Type: application/json');
@@ -54,10 +47,10 @@ if ($usuario['estatus'] == 0) {
     exit;
 }
 
-// 4. VALIDACIÓN CRÍTICA: Comparamos la contraseña escrita con el Hash de la BD
+// 4. Comparamos la contraseña escrita con el Hash de la BD
 if (password_verify($password, $usuario['password'])) {
 
-    // ¡Contraseña correcta! Guardamos los datos clave en la Sesión del Servidor
+    // Contraseña correcta, Guardamos los datos clave en la Sesión del Servidor
     $_SESSION['usuario_id'] = $usuario['id'];
     $_SESSION['usuario_nombre'] = $usuario['nombre'];
     $_SESSION['usuario_rol'] = $usuario['rol'];

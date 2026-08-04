@@ -1,9 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/editar_evento.php (ACTUALIZACIÓN DE METADATOS E INVENTARIO)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// ACTUALIZACIÓN DE METADATOS E INVENTARIO DE EVENTO
 
 session_start();
 

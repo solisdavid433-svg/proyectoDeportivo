@@ -1,10 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/guardar_entrega.php (GUARDADO DE FIRMA RELACIONAL Y PREVENTIVO)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
-
+// GUARDADO DE FIRMA RELACIONAL Y PREVENTIVO DE DUPLICADOS)
 session_start();
 
 /** @var resource $conn */
@@ -12,7 +7,7 @@ session_start();
 header('Content-Type: application/json');
 require_once '../config/db.php';
 
-// Candado estricto de seguridad: Solo el rol Staff puede registrar firmas de entrega
+// Solo el rol Staff puede registrar firmas de entrega
 if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Staff') {
     echo json_encode(['success' => false, 'message' => 'Acceso denegado.']);
     exit;
@@ -23,7 +18,7 @@ $folio = isset($input['folio']) ? intval($input['folio']) : 0;
 $firma = isset($input['firma']) ? $input['firma'] : '';
 $talla = isset($input['talla']) ? trim($input['talla']) : '';
 
-// 💥 TRUCO MAESTRO: Tomamos de forma obligatoria el ID del evento que el Staff confirmó en su sesión.
+// Tomamos de forma obligatoria el ID del evento que el Staff confirmó en su sesión.
 // Si por alguna razón extrema no existiera, recurrimos al del input como un respaldo secundario.
 $evento_id = isset($_SESSION['evento_id_staff']) ? intval($_SESSION['evento_id_staff']) : (isset($input['evento_id']) ? intval($input['evento_id']) : 0);
 $staff_id  = $_SESSION['usuario_id'];
@@ -33,9 +28,9 @@ if ($folio === 0 || empty($firma) || empty($talla) || $evento_id === 0) {
     exit;
 }
 
-// ==========================================================================
-// 🚨 EL ESCUDO: VALIDACIÓN ANTIDUPLICADOS REAL-TIME
-// ==========================================================================
+
+// VALIDACIÓN ANTIDUPLICADOS REAL-TIME
+
 // Consultamos si este folio ya tiene un registro de kit guardado en esta carrera
 $sqlCheck = "SELECT COUNT(*) AS total FROM tbl_entregas_kits WHERE competidor_id = ? AND evento_id = ?";
 $stmtCheck = sqlsrv_query($conn, $sqlCheck, array($folio, $evento_id));
@@ -69,7 +64,7 @@ if ($stmtInsert === false) {
 }
 
 // 2. Cambiamos el estatus del competidor
-// CORRECCIÓN CRÍTICA: Agregamos "AND evento_id = ?" para evitar actualizar folios repetidos de otras carreras
+// Agregamos "AND evento_id = ?" para evitar actualizar folios repetidos de otras carreras
 $sqlUpdate = "UPDATE tbl_competidores SET estatus_entrega = 'ENTREGADO' WHERE folio = ? AND evento_id = ?";
 $paramsUpdate = array($folio, $evento_id);
 $stmtUpdate = sqlsrv_query($conn, $sqlUpdate, $paramsUpdate);
@@ -80,6 +75,6 @@ if ($stmtUpdate === false) {
     exit;
 }
 
-// ÉXITO TOTAL: Confirmamos la transacción en el motor SQL Server 2014
+// Confirmamos la transacción en el motor SQL Server 2014
 sqlsrv_commit($conn);
 echo json_encode(['success' => true]);

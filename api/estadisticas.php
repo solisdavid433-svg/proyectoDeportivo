@@ -1,10 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/estadisticas.php (MÓDULO DE ANALÍTICAS CORREGIDO CON FILTRADO ESTRICTO)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
-
+// MÓDULO DE ANALÍTICAS CORREGIDO CON FILTRADO ESTRICTO POR EVENTO)
 session_start();
 
 /** @var resource $conn */
@@ -12,7 +7,7 @@ session_start();
 header('Content-Type: application/json');
 require_once '../config/db.php';
 
-// Candado de seguridad: Solo Administrador o Encargado pueden consumir estadísticas
+// Solo Administrador o Encargado pueden consumir estadísticas
 if (!isset($_SESSION['usuario_rol']) || ($_SESSION['usuario_rol'] !== 'Administrador' && $_SESSION['usuario_rol'] !== 'Encargado')) {
     echo json_encode(['success' => false, 'message' => 'Acceso denegado.']);
     exit;
@@ -21,10 +16,9 @@ if (!isset($_SESSION['usuario_rol']) || ($_SESSION['usuario_rol'] !== 'Administr
 // Capturamos el evento_id que nos manda el archivo de JS
 $evento_id = isset($_GET['evento_id']) ? intval($_GET['evento_id']) : 1;
 
-// --------------------------------------------------------------------------
 // METRICA 1: AVANCE GENERAL FILTRADO ESTRICTAMENTE POR EVENTO
-// --------------------------------------------------------------------------
-//  CORRECCIÓN AQUÍ: Ahora filtramos por evento_id para que no cuente competidores de otras carreras
+
+// Ahora filtramos por evento_id para que no cuente competidores de otras carreras
 $sqlTotal = "SELECT COUNT(*) as total FROM tbl_competidores WHERE evento_id = ?";
 $qTotal = sqlsrv_query($conn, $sqlTotal, array($evento_id));
 $rTotal = sqlsrv_fetch_array($qTotal, SQLSRV_FETCH_ASSOC);
@@ -44,9 +38,9 @@ $totalCambios = $rCambios['total'] ?? 0;
 $totalPendientes = $totalAtletas - $totalEntregados;
 $porcentajeAvance = $totalAtletas > 0 ? round(($totalEntregados / $totalAtletas) * 100, 1) : 0;
 
-// --------------------------------------------------------------------------
+
 // METRICA 2: INVENTARIO DE PLAYERAS (ENTREGADAS VS DISPONIBLES EN EVENTO)
-// --------------------------------------------------------------------------
+
 // 1. Extraemos el stock total límite configurado para este evento específico
 $sqlLimites = "SELECT stock_xs, stock_ch, stock_m, stock_g, stock_xg, stock_2xl FROM tbl_eventos WHERE id = ?";
 $qLimites = sqlsrv_query($conn, $sqlLimites, array($evento_id));
@@ -82,9 +76,9 @@ $tallas = [
     '2XL' => ['entregados' => $entregadas['2XL'], 'total' => $limite2XL]
 ];
 
-// --------------------------------------------------------------------------
+
 // METRICA 3: PRODUCTIVIDAD DEL STAFF EN ESTE EVENTO
-// --------------------------------------------------------------------------
+
 $sqlStaff = "SELECT u.nombre as operador, 
                     COUNT(e.competidor_id) as total_entregas,
                     --CALCULO DE LATIDO EN TIEMPO REAL
@@ -105,7 +99,7 @@ while ($row = sqlsrv_fetch_array($qStaff, SQLSRV_FETCH_ASSOC)) {
     $rankingStaff[] = $row;
 }
 
-// RESPUESTA LIMPIA EN FORMATO JSON (Se mantiene exactamente igual)
+// RESPUESTA LIMPIA EN FORMATO JSON
 echo json_encode([
     'success' => true,
     'resumen' => [

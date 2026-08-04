@@ -13,7 +13,7 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Staff') {
     exit();
 }
 
-// Enlace relacional con tu base de datos
+// Enlace relacional con base de datos
 require_once 'config/db.php';
 
 // DETECTOR DE CAMBIO EN VIVO: Si el Staff ya confirmó una carrera, verificamos si sigue activa
@@ -50,7 +50,7 @@ if (!isset($_SESSION['evento_id_staff'])) {
             <p class="section-desc">Verifique que esté ingresando a la competencia correcta para la entrega de kits de hoy.</p>
 
             <?php
-            //ALINEACIÓN MAESTRA: Jalamos estrictamente el evento que el Encargado activó globalmente
+            //se Jala estrictamente el evento que el Encargado activó globalmente
             $sql_ev = "SELECT id, nombre_evento, disciplina FROM tbl_eventos WHERE es_activo = 1";
             $stmt_ev = sqlsrv_query($conn, $sql_ev);
 
@@ -59,7 +59,7 @@ if (!isset($_SESSION['evento_id_staff'])) {
             } else {
                 $row_ev = sqlsrv_fetch_array($stmt_ev, SQLSRV_FETCH_ASSOC);
 
-                // Si el encargado ya activó una carrera en la base de datos:
+                // Si el encargado ya activó una carrera en la base de datos
                 if ($row_ev) {
                     $_SESSION['temp_evento_id'] = $row_ev['id']; // Almacenamos el ID temporalmente
             ?>
@@ -71,12 +71,12 @@ if (!isset($_SESSION['evento_id_staff'])) {
 
                     <form action="api/confirmar_evento_staff.php" method="POST">
                         <button type="submit" style="width: 100%; background-color: #16A34A; color: white; border: none; padding: 0.85rem; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer;">
-                            ✔️ Confirmar y Abrir Mesa de Entrega
+                            Confirmar y Abrir Mesa de Entrega
                         </button>
                     </form>
             <?php
                 } else {
-                    // 🛡️ SALVAGUARDA LOGÍSTICA: Si el encargado aún no elige nada en su panel
+                    //Si el encargado aún no elige nada en su panel
                     echo "<div style='background-color: #FFFBEB; border: 1px solid #FDE68A; padding: 1.2rem; border-radius: 8px; margin: 1.5rem 0; text-align: left; color: #92400E;'>";
                     echo "⚠️ <b>Mesa en Espera:</b> El Encargado aún no ha activado ninguna competencia el día de hoy. Por favor, espere un momento a que se aperture el circuito desde el monitor de supervisión.";
                     echo "</div>";

@@ -1,10 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/guardar_staff.php (CRUD CON HASH DE CONTRASEÑA SEGURO)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
-
+// CRUD CON HASH DE CONTRASEÑA SEGURO PARA STAFF
 session_start();
 
 /** @var resource $conn */
@@ -31,19 +26,19 @@ if (empty($nombre) || empty($usuario)) {
 $evento_param = ($evento_id === 0) ? null : $evento_id;
 
 if ($id === 0) {
-    // 🆕 OPERACIÓN: ALTA DE NUEVO STAFF
+    // ALTA DE NUEVO STAFF
     if (empty($password)) {
         echo json_encode(['success' => false, 'message' => 'La contraseña es obligatoria para cuentas nuevas.']);
         exit;
     }
 
-    //INTEGRACIÓN CRÍTICA: Convertimos la clave a un Hash BCRYPT seguro compatible con tu login.php
+    // Convertimos la clave a un Hash BCRYPT seguro compatible con tu login.php
     $password_encriptada = password_hash($password, PASSWORD_BCRYPT);
 
     $sql = "INSERT INTO tbl_usuarios (nombre, correo, password, rol, estatus, evento_asignado_id) VALUES (?, ?, ?, 'Staff', 1, ?)";
     $params = array($nombre, $usuario, $password_encriptada, $evento_param);
 } else {
-    // OPERACIÓN: EDICIÓN DE PERFIL
+    // EDICIÓN DE PERFIL
     if (!empty($password)) {
         // Si el admin asignó una contraseña nueva en la edición, también la encriptamos
         $password_encriptada = password_hash($password, PASSWORD_BCRYPT);

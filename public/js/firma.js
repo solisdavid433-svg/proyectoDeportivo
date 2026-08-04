@@ -1,8 +1,4 @@
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: public/js/firma.js (VERSIÓN CORREGIDA Y BLINDADA)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// VERSIÓN CORREGIDA Y BLINDADA
 
 let folioActual = null;
 let modal = null;

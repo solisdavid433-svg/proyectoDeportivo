@@ -1,20 +1,12 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: config/db.php (CONEXIÓN CENTRALIZADA A SQL SERVER)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
-
+// CONEXIÓN CENTRALIZADA A SQL SERVER
 // 1. Parámetros de configuración del servidor local
-$serverName = "localhost\\SQLEXPRESS"; // Si falla, prueba cambiar por "127.0.0.1" o "localhost"
+$serverName = "localhost\\SQLEXPRESS";
 
 // 2. Opciones de conexión
-// Nota: Si la Autenticación de Windows falla en Apache, descomenta 'Uid' y 'PWD'
 $connectionInfo = array(
     "Database" => "db_proyecto_deportivo",
     "CharacterSet" => "UTF-8"
-    // "Uid" => "sa",
-    // "PWD" => "TuPasswordAqui"
 );
 
 // 3. Intentar realizar el puente de conexión nativa

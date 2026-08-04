@@ -1,9 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/activar_evento.php (CONMUTADOR DE EVENTO ACTIVO GLOBAL)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// CONMUTADOR DE EVENTO ACTIVO GLOBAL
 
 session_start();
 

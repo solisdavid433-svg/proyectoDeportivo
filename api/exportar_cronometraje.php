@@ -1,10 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/exportar_cronometraje.php (PLANTILLA PARA SOFTWARE DE CHIPS)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
-
+// PLANTILLA PARA SOFTWARE DE CHIPS DE CRONOMETRAJE
 session_start();
 
 /** @var resource $conn */

@@ -1,9 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/agregar_competidor.php (ALTA MANUAL EXTEMPORÁNEA)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// ALTA MANUAL EXTEMPORÁNEA DE COMPETIDORES)
 
 session_start();
 
@@ -12,7 +8,7 @@ session_start();
 header('Content-Type: application/json');
 require_once '../config/db.php';
 
-// Candado estricto: Solo el Administrador puede registrar atletas de forma directa
+// Solo el Administrador puede registrar atletas de forma directa
 if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administrador') {
     echo json_encode(['success' => false, 'message' => 'Acceso denegado. Privilegios insuficientes.']);
     exit;

@@ -12,7 +12,7 @@ if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Encargado'
     exit();
 }
 
-//  CONEXIÓN MAESTRA CON TU ARCHIVO CENTRAL DE DB
+//  CONEXIÓN CON BD
 require_once 'config/db.php';
 ?>
 
@@ -47,7 +47,7 @@ require_once 'config/db.php';
                 <label for="select-evento-activo" class="label-bold">Monitorear Competencia:</label>
                 <select id="select-evento-activo" class="form-select" onchange="cargarEstadisticasSupervisor()">
                     <?php
-                    // EXTRACCIÓN MAESTRA: Trae los circuitos deportivos directamente de SQL Server
+                    // Trae los circuitos deportivos directamente de SQL Server
                     $sql_sel = "SELECT id, nombre_evento FROM tbl_eventos ORDER BY id DESC";
                     $stmt_sel = sqlsrv_query($conn, $sql_sel);
 
@@ -146,6 +146,7 @@ require_once 'config/db.php';
 
     </main>
 
+    <!-- MODAL REASIGNAR CATEGORÍA -->
     <div id="modal-supervisor" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 450px; box-sizing: border-box;">
             <span class="close-modal" onclick="cerrarModalSupervisor()">&times;</span>

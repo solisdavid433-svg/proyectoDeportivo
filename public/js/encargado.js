@@ -1,8 +1,4 @@
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: public/js/encargado.js (CONTROLADOR DE SUPERVISIÓN DEPURADO)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// CONTROLADOR DE SUPERVISIÓN DEPURADO
 
 let folioAtletaSeleccionado = null;
 
@@ -105,10 +101,10 @@ window.cargarEstadisticasSupervisor = async function () {
             s.forEach((staff, index) => {
                 const tr = document.createElement('tr');
 
-                //CAPTURA INTELIGENTE: Leemos el estatus del servidor (por defecto 'Ausente' si no viene)
+                // Leemos el estatus del servidor (por defecto 'Ausente' si no viene)
                 const estatusReal = staff.estatus_operativo || 'Ausente';
 
-                //CONTROL DE ESTILOS: Si está activo usa tu clase 'online' (verde), si no, usa 'offline' (gris/rojo)
+                // Si está activo usa tu clase 'online' (verde), si no, usa 'offline' (gris/rojo)
                 const claseColor = (estatusReal === 'Activo') ? 'online' : 'offline';
 
                 tr.innerHTML = `

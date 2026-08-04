@@ -1,9 +1,5 @@
 <?php
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: api/eliminar_evento.php (BORRADO EN CASCADA COMPLETO CON DESASIGNACIÓN)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// BORRADO EN CASCADA COMPLETO CON DESASIGNACIÓN DE STAFF)
 
 session_start();
 
@@ -47,7 +43,7 @@ if ($evento_id === 0) {
     exit;
 }
 
-// 💥 COBERTURA TOTAL EN CASCADA (4 PASOS)
+// COBERTURA TOTAL EN CASCADA (4 PASOS)
 sqlsrv_begin_transaction($conn);
 
 // Paso 1: Eliminar las entregas de kits vinculadas a esta carrera
@@ -72,7 +68,7 @@ if ($stmt_comp === false) {
     exit;
 }
 
-// 🎯 PASO 3 (NUEVO): Desasignar a los usuarios del Staff vinculados a este evento
+// Paso 3: Desasignar a los usuarios del Staff vinculados a este evento
 // Ponemos en NULL la columna para romper la FK sin borrar sus cuentas
 $sql_user = "UPDATE tbl_usuarios SET evento_asignado_id = NULL WHERE evento_asignado_id = ?";
 $stmt_user = sqlsrv_query($conn, $sql_user, array($evento_id));

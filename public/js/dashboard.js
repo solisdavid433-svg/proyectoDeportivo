@@ -1,8 +1,4 @@
-// ==========================================================================
-// SYSTEM: CONTROL DE ENTREGA DE KITS DEPORTIVOS
-// FILE: public/js/dashboard.js (MANEJADOR ANALÍTICO CON EDICIÓN DE ATLETAS)
-// AUTHOR: JOSÉ DAVID SOLÍS RANGEL
-// ==========================================================================
+// MANEJADOR ANALÍTICO CON EDICIÓN DE ATLETAS
 
 document.addEventListener('DOMContentLoaded', () => {
     // Ejecutamos la carga de estadísticas de inmediato al entrar
@@ -77,9 +73,9 @@ async function ejecutarBusquedaAdmin(valor) {
     }
 }
 
-// ==========================================================================
+
 // CONTROLADORES GLOBALES DEL MODAL DE EDICIÓN DE COMPETIDORES
-// ==========================================================================
+
 const modalAtletaAdmin = document.getElementById('modal-admin-competidor');
 
 // TRANSFORMA LA FUNCIÓN A ASÍNCRONA (async)
@@ -91,7 +87,7 @@ window.abrirModalEditarCompetidor = async (folio, nombre, categoria) => {
     document.getElementById('comp_folio').value = folio;
     document.getElementById('comp_nombre').value = nombre;
 
-    //SOLUCIÓN: Jalamos el ID real desde el input oculto de admin_evento.php
+    // Jalamos el ID real desde el input oculto de admin_evento.php
     const hdnEvento = document.getElementById('hdn-evento-id');
     const eventoId = hdnEvento ? parseInt(hdnEvento.value) : 0;
 
@@ -138,9 +134,9 @@ window.cerrarModalAdminCompetidor = () => {
 
 
 
-// ==========================================================================
+
 // RECOLECTOR DE ANALÍTICAS ORIGINAL (CONSERVADO INTACTO)
-// ==========================================================================
+
 async function cargarEstadisticas() {
     try {
         const eventoId = document.getElementById('hdn-evento-id')?.value || 1;
@@ -267,9 +263,9 @@ window.guardarCambioCompetidor = async (event) => {
     }
 };
 
-// ==========================================================================
+
 // GESTIÓN DE ALTAS MANUALES DE COMPETIDORES
-// ==========================================================================
+
 const modalNuevoCompetidor = document.getElementById('modal-nuevo-competidor');
 
 window.abrirModalNuevoCompetidor = async () => {

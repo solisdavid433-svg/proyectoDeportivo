@@ -6,7 +6,7 @@ header("Cache-Control: no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
-// Si no existe la sesión de rol O el rol no es Administrador, lo expulsamos
+// Si no existe la sesión de rol O el rol no es Administrador, se expulsa
 if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'Administrador') {
     header('Location: index.php');
     exit();
@@ -18,7 +18,7 @@ require_once 'config/db.php';
 ?>
 
 <?php
-// 🎯 CAPTURA CORRECTA: Leemos '?id=X' de la URL de admin_evento.php
+// Leemos '?id=X' de la URL de admin_evento.php
 $evento_id_visualizando = isset($_GET['id']) ? intval($_GET['id']) : 1;
 
 // Nombre de respaldo por si ocurre algún fallo
@@ -46,7 +46,7 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
 
 <body class="bg-light">
 
-    <!-- CRÍTICO: Este input oculto le permitirá a JavaScript saber qué evento estamos auditando -->
+    <!--  Este input oculto le permitirá a JavaScript saber qué evento estamos auditando -->
     <input type="hidden" id="hdn-evento-id" value="<?php echo $evento_id; ?>">
 
     <header class="navbar">
@@ -78,7 +78,7 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
                     📊 Exportar Lista Excel
                 </a>
 
-                <!-- NUEVO BOTÓN 2: LA PLANTILLA COMPATIBLE CON EL SEÑOR CARLOS -->
+                <!--  LA PLANTILLA COMPATIBLE CON EL SISTEMA CRONOMETRAR -->
                 <a href="api/exportar_cronometraje.php?id=<?php echo $evento_id_visualizando; ?>" target="_blank" class="btn" style="background-color: #475569; color: white; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; font-weight: 700; border-radius: 6px; text-decoration: none; font-size: 0.85rem; box-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.2);">
                     ⏱️ Descargar Plantilla Cronometraje
                 </a>
@@ -164,9 +164,7 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
             </div>
         </section>
 
-        <!-- ==========================================================================
-     FILA DE CONTROL INFERIOR: RENDIMIENTO STAFF Y CONTROL DE COMPETIDORES
-     ========================================================================== -->
+        <!-- FILA DE CONTROL INFERIOR: RENDIMIENTO STAFF Y CONTROL DE COMPETIDORES -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; align-items: start; width: 100%; box-sizing: border-box;">
             <!--TARJETA IZQUIERDA: MONITOREO Y BÚSQUEDA DE COMPETIDORES EN ESTE EVENTO -->
             <div class="admin-card" style="margin: 0; min-height: 380px; display: flex; flex-direction: column;">
@@ -247,9 +245,7 @@ if ($stmt_header_name && $row_hn = sqlsrv_fetch_array($stmt_header_name, SQLSRV_
                 </div>
             </div>
 
-            <!-- ==========================================================================
-     MODAL: REGISTRAR NUEVO COMPETIDOR EXTEMPORÁNEO
-     ========================================================================== -->
+            <!-- MODAL: REGISTRAR NUEVO COMPETIDOR EXTEMPORÁNEO -->
             <div id="modal-nuevo-competidor" class="modal" style="display: none;">
                 <div class="modal-content" style="max-width: 460px; box-sizing: border-box;">
                     <span class="close-modal" onclick="cerrarModalNuevoCompetidor()">&times;</span>

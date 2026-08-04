@@ -5,7 +5,6 @@ session_start();
 // Si el usuario que está cerrando sesión es el Encargado, apagamos el circuito en la BD
 if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'Encargado') {
 
-    // 🎯 CORRECCIÓN DE RUTA 1: Subimos un nivel con "../" para alcanzar la carpeta config
     require_once '../config/db.php';
 
     if (isset($conn)) {
