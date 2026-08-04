@@ -32,7 +32,7 @@ $stmt = sqlsrv_query($conn, $sql, array($evento_id));
 
 <table border="1">
     <thead>
-        <!-- Encabezados idénticos a los que exporta el software del señor Carlos -->
+        <!-- Encabezados idénticos a los que exporta el software cronometrar -->
         <tr style="background-color: #334155; color: white; font-weight: bold;">
             <th>Ficha</th>
             <th>Bib</th>

@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 // Bloque anti-caché: Obliga al navegador a consultar al servidor siempre

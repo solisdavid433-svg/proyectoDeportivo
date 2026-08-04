@@ -1,7 +1,5 @@
 <?php
-
 // CATÁLOGO DINÁMICO DE CATEGORÍAS POR EVENTO
-
 session_start();
 
 /** @var resource $conn */

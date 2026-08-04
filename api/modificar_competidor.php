@@ -1,6 +1,5 @@
 <?php
 // MODIFICAR COMPETIDOR
-
 session_start();
 
 /** @var resource $conn */

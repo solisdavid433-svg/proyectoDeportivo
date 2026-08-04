@@ -1,6 +1,5 @@
 <?php
 // ALTA MANUAL EXTEMPORÁNEA DE COMPETIDORES)
-
 session_start();
 
 /** @var resource $conn */

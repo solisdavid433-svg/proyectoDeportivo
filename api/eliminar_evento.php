@@ -1,6 +1,5 @@
 <?php
 // BORRADO EN CASCADA COMPLETO CON DESASIGNACIÓN DE STAFF)
-
 session_start();
 
 /** @var resource $conn */

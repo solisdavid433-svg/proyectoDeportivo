@@ -1,6 +1,5 @@
 <?php
 //PRODUCCIÓN - ADAPTADO AL ESQUEMA REAL DE COLUMNAS DE LA BASE DE DATOS)
-
 session_start();
 
 /** @var resource $conn */

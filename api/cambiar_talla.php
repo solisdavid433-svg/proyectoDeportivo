@@ -1,6 +1,5 @@
 <?php
 // PROCESADOR DE CAMBIOS E HISTORIAL DE TALLAS DE PLAYERA)
-
 session_start();
 
 /** @var resource $conn */

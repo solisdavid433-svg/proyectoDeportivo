@@ -1,6 +1,5 @@
 <?php
 // EXTRACCIÓN DE AUDITORÍA CON INNER JOIN
-
 session_start();
 
 /** @var resource $conn */

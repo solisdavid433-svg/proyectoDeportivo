@@ -1,6 +1,5 @@
 <?php
 // BUSCADOR ADAPTADO A LLAVE COMPUESTA Y TEXTO CORTO
-
 session_start();
 
 /** @var resource $conn */

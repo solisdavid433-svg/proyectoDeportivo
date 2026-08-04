@@ -1,6 +1,5 @@
 <?php
 // AUDITORÍA Y CAMBIO SEGMENTADO POR EVENTO DE CATEGORÍA DE COMPETIDOR)
-
 session_start();
 
 /** @var resource $conn */

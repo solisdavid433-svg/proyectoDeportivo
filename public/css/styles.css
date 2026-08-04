@@ -1,6 +1,4 @@
-/* ==========================================================================
-   VARIABLES DE DISEÑO E IDENTIDAD VISUAL
-   ========================================================================== */
+/* VARIABLES DE DISEÑO E IDENTIDAD VISUAL */
 :root {
     --primary-color: #E31A22;
     /* Rojo del isotipo corporativo */
@@ -23,9 +21,7 @@
     /* Fondo suave para estados de advertencia */
 }
 
-/* ==========================================================================
-   ESTILOS GENERALES Y RESET
-   ========================================================================== */
+/* ESTILOS GENERALES Y RESET */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -39,9 +35,7 @@ body {
     line-height: 1.5;
 }
 
-/* ==========================================================================
-   COMPONENTES INTERACTIVOS (BOTONES)
-   ========================================================================== */
+/* COMPONENTES INTERACTIVOS (BOTONES) */
 .btn {
     display: inline-block;
     font-size: 1.1rem;
@@ -75,9 +69,7 @@ body {
     width: 100%;
 }
 
-/* ==========================================================================
-   ESTILOS ESPECÍFICOS DE LA INTERFAZ DE LOGIN
-   ========================================================================== */
+/* ESTILOS ESPECÍFICOS DE LA INTERFAZ DE LOGIN */
 .login-body {
     display: flex;
     align-items: center;
@@ -152,9 +144,7 @@ body {
     box-shadow: 0 0 0 3px rgba(26, 70, 125, 0.15);
 }
 
-/* ==========================================================================
-   ESTRUCTURA DEL PANEL DE CONTROL (NAVBAR Y LAYOUT)
-   ========================================================================== */
+/* ESTRUCTURA DEL PANEL DE CONTROL (NAVBAR Y LAYOUT) */
 .navbar {
     background-color: var(--secondary-color);
     /* Azul Marino del Logo */
@@ -212,9 +202,7 @@ body {
     border-color: var(--primary-color);
 }
 
-/* ==========================================================================
-   CONTENEDOR Y DRAG & DROP (.CSV)
-   ========================================================================== */
+/* CONTENEDOR Y DRAG & DROP (.CSV) */
 .dashboard-container {
     max-width: 1400px;
     margin: 2.5rem auto;
@@ -324,9 +312,7 @@ body {
     border-color: var(--secondary-color);
 }
 
-/* ==========================================================================
-   TABLAS DE DATOS ADMINISTRATIVAS
-   ========================================================================== */
+/* TABLAS DE DATOS ADMINISTRATIVAS */
 .table-responsive {
     width: 100%;
     overflow-x: auto;
@@ -398,9 +384,7 @@ body {
     display: none !important;
 }
 
-/* ==========================================================================
-   INTERFAZ DEL ENCARGADO / SUPERVISOR (MÉTRICAS Y PRODUCTIVIDAD)
-   ========================================================================== */
+/* INTERFAZ DEL ENCARGADO / SUPERVISOR (MÉTRICAS Y PRODUCTIVIDAD) */
 .user-badge.supervisor {
     border-color: #38BDF8;
     color: #38BDF8;
@@ -590,9 +574,7 @@ body {
     }
 }
 
-/* ==========================================================================
-   INTERFAZ TÁCTIL DEL STAFF (MESA DE ATENCIÓN, QR Y CANVAS)
-   ========================================================================== */
+/* INTERFAZ TÁCTIL DEL STAFF (MESA DE ATENCIÓN, QR Y CANVAS) */
 .user-badge.staff-mode {
     border-color: #F59E0B;
     color: #F59E0B;
@@ -734,9 +716,7 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
 }
 
-/* ==========================================================================
-   EL LIENZO DE FIRMA DIGITAL (HTML5 CANVAS)
-   ========================================================================== */
+/* EL LIENZO DE FIRMA DIGITAL (HTML5 CANVAS) */
 .modal-instruction {
     font-size: 0.95rem;
     color: #64748B;
@@ -795,10 +775,7 @@ body {
     }
 }
 
-/* ==========================================================================
-   CONFIGURACIÓN PARA EL ESTADO DE MODIFICACIÓN ("HACER CAMBIO")
-   ========================================================================== */
-
+/* CONFIGURACIÓN PARA EL ESTADO DE MODIFICACIÓN ("HACER CAMBIO") */
 /* Botón Amarillo Táctil de Acción */
 .btn-warning {
     background-color: var(--warning-color);
@@ -827,9 +804,7 @@ body {
     border-left: 4px solid var(--warning-color);
 }
 
-/* ==========================================================================
-   DASHBOARD INTERNO DEL EVENTO (GRÁFICAS Y ANALÍTICA)
-   ========================================================================== */
+/* DASHBOARD INTERNO DEL EVENTO (GRÁFICAS Y ANALÍTICA) */
 .event-dashboard-header {
     display: flex;
     justify-content: space-between;
@@ -1008,9 +983,7 @@ body {
     text-align: right;
 }
 
-/* ==========================================================================
-   CORRECCIÓN: BOTÓN DE REGRESO ESTILIZADO (CON INTERFAZ TÁCTIL)
-   ========================================================================== */
+/* CORRECCIÓN: BOTÓN DE REGRESO ESTILIZADO (CON INTERFAZ TÁCTIL) */
 .btn-back {
     display: inline-flex;
     align-items: center;
@@ -1045,10 +1018,7 @@ body {
     transform: scale(0.97);
 }
 
-/* ==========================================================================
-   DESIGN: AJUSTES VISUALES PARA LA MESA DEL STAFF (COLORES, MODAL Y BOTÓN X)
-   ========================================================================== */
-
+/* DESIGN: AJUSTES VISUALES PARA LA MESA DEL STAFF (COLORES, MODAL Y BOTÓN X) */
 /* 1. CONTROL DE COLORES PARA LAS TARJETAS (ENTREGADO EN VERDE) */
 .status-badge {
     padding: 0.4rem 0.8rem;
@@ -1163,10 +1133,7 @@ body {
     /* Crece un poquito para indicar que es clickeable */
 }
 
-/* ==========================================================================
-   FIX DESIGN: AJUSTE DE MARGENES Y RESPONSIVIDAD DEL CANVAS DE FIRMA
-   ========================================================================== */
-
+/* FIX DESIGN: AJUSTE DE MARGENES Y RESPONSIVIDAD DEL CANVAS DE FIRMA */
 /* Asegura que todos los elementos calculen su tamaño incluyendo padding y bordes */
 .modal-content,
 .canvas-container,
@@ -1220,10 +1187,7 @@ body {
     margin-bottom: 1rem;
 }
 
-/* ==========================================================================
-   DASHBOARD VISUAL UPGRADE: BARRA DE PROGRESO PREMIUM
-   ========================================================================== */
-
+/* DASHBOARD VISUAL UPGRADE: BARRA DE PROGRESO PREMIUM */
 /* Contenedor principal de la gráfica */
 .chart-placeholder-box {
     display: flex;

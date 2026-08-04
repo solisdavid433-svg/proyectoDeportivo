@@ -1,6 +1,5 @@
 <?php
 // ACTUALIZACIÓN DE METADATOS E INVENTARIO DE EVENTO
-
 session_start();
 
 /** @var resource $conn */
