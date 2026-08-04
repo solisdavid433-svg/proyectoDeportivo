@@ -714,7 +714,7 @@ require_once 'config/db.php';
                     resultadoBox.style.backgroundColor = "#DCFCE7";
                     resultadoBox.style.color = "#15803D";
                     resultadoBox.style.border = "1px solid #BBF7D0";
-                    resultadoBox.innerHTML = `<b>¡Alta Exitosa!</b><br>${res.message}<br>• Competidores inyectados: <b>${res.inserted_athletes}</b>`;
+                    resultadoBox.innerHTML = `<b>¡Alta Exitosa!</b><br>${res.message}`;
                     form.reset();
                     setTimeout(() => {
                         window.location.reload();
